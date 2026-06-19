@@ -45,10 +45,6 @@
       </div>
 
       <textarea v-model="input" class="text-area" placeholder="在此输入要生成二维码的文本"></textarea>
-
-      <div class="action-row">
-        <button class="primary-btn" :disabled="!input.trim()" @click="generate">生成二维码</button>
-      </div>
     </div>
 
     <!-- 右列 -->
@@ -69,7 +65,7 @@
         <div class="preview-title">二维码</div>
         <div class="preview-body">
           <div v-if="svgMarkup" class="svg-wrap" v-html="svgMarkup" />
-          <span v-else class="empty-hint">输入文本后点「生成二维码」</span>
+          <span v-else class="empty-hint">输入文本后自动生成二维码</span>
         </div>
       </div>
     </div>
@@ -77,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useMessage } from 'naive-ui'
 import PillBtn from '@/components/ui/PillBtn.vue'
 import { qrApi } from '@/api/qrcode'
@@ -89,16 +85,25 @@ const svgMarkup = ref('')
 
 const message = useMessage()
 
-async function generate() {
-  const text = input.value.trim()
-  if (!text) return
+// 实时生成：输入文本变化即调 Rust 编码；空文本清空预览。
+// reqId 防止旧响应覆盖新结果；编码失败保留上次预览，仅 toast 一次（沿用 URL 工具的静默策略对失败不打扰用户）。
+let encodeReqId = 0
+watch(input, async (text) => {
+  const trimmed = text.trim()
+  const my = ++encodeReqId
+  if (!trimmed) {
+    svgMarkup.value = ''
+    return
+  }
   try {
-    svgMarkup.value = await qrApi.encode(text)
+    const svg = await qrApi.encode(trimmed)
+    if (my === encodeReqId) svgMarkup.value = svg
   } catch (e) {
+    if (my !== encodeReqId) return
     const msg = typeof e === 'string' ? e : '生成失败'
     message.error(msg)
   }
-}
+}, { immediate: true })
 
 const IMAGE_EXTS = ['bmp', 'gif', 'jpeg', 'jpg', 'pbm', 'png', 'tga', 'tif', 'tiff', 'webp']
 
@@ -268,20 +273,8 @@ async function copyText() {
 }
 .text-area:focus { border-color: var(--accent, #5b8cff); }
 
-.action-row { display: flex; }
-.primary-btn {
-  height: 32px; padding: 0 16px;
-  border-radius: 8px;
-  background: var(--accent, #5b8cff);
-  color: white; font-size: 13px; font-weight: 500;
-  border: none; cursor: pointer;
-}
-.primary-btn:disabled {
-  background: var(--card-2); color: var(--ink-3); cursor: not-allowed;
-}
-
 .dropzone {
-  border: 1.5px dashed var(--border);
+  border: 2px dashed var(--ink-5);
   border-radius: var(--r-md);
   padding: 24px 18px;
   text-align: center;
