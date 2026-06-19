@@ -36,7 +36,7 @@ const isActive = computed(() => nav.activeId === props.item.id)
 
 function onClick() {
   nav.select(props.item.id)
-  router.push(props.item.id === 'url' ? '/tools/url' : `/tools/${props.item.id}`)
+  router.push(`/tools/${props.item.id}`)
 }
 </script>
 

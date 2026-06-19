@@ -65,6 +65,9 @@ export const useNavStore = defineStore('nav', () => {
         if (hit) return hit.label
       }
     }
+    for (const f of foot) {
+      if (f.id === id) return f.label
+    }
     return null
   }
 
