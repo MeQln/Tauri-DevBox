@@ -59,10 +59,9 @@ mod tests {
 
     #[test]
     fn decode_invalid_returns_original() {
-        // %zz 非法序列：percent_decode_str 不会失败，但解码后非合法 UTF-8 时回退
-        // 这里 %zz 实际会保留为字面量（百分号编码解析层面）
+        // %zz 非法百分号序列：percent_decode_str 保留为字面量
         let r = url_decode("%zz".to_string(), false);
-        assert!(r == "%zz" || r == "\u{FFFD}\u{FFFD}\u{FFFD}");
+        assert_eq!(r, "%zz");
     }
 
     #[test]
