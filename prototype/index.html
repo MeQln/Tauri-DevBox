@@ -491,6 +491,35 @@
       for (let i = 0; i < n; i++) buf[i] = i + 1;
       el.textContent = buf.join('\n');
     }
+
+    // === URL CONVERT ===
+    const inputEl = document.getElementById('input');
+    const outputEl = document.getElementById('output');
+    const gutterIn = document.getElementById('gutterInput');
+    const gutterOut = document.getElementById('gutterOutput');
+    const swTransform = document.getElementById('switchTransform');
+    const swMultiline = document.getElementById('switchMultiline');
+
+    function safeDecode(s) {
+      try { return decodeURIComponent(s); } catch { return s; }
+    }
+    function convert() {
+      const text = inputEl.value;
+      const isEncode = swTransform.checked;
+      const isMultiline = swMultiline.checked;
+      const fn = isEncode ? encodeURIComponent : safeDecode;
+      const result = isMultiline
+        ? text.split('\n').map(fn).join('\n')
+        : fn(text);
+      outputEl.textContent = result;
+      updateGutter(gutterIn,  text.split('\n').length);
+      updateGutter(gutterOut, result.split('\n').length);
+    }
+
+    inputEl.addEventListener('input', convert);
+    swTransform.addEventListener('change', convert);
+    swMultiline.addEventListener('change', convert);
+    convert();   // 初始化（空输入空输出，行号 = 1）
   })();
   </script>
 </body>
