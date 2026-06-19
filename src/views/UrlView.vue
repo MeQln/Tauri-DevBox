@@ -1,21 +1,6 @@
 <template>
   <header class="page-head">
     <h1>URL 编码 / 解码工具</h1>
-    <div class="page-actions">
-      <GhostBtn title="添加到收藏夹">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2l3 7h7l-5.5 4 2 7-6.5-5-6.5 5 2-7L2 9h7z" />
-        </svg>
-        <span>添加到收藏夹</span>
-      </GhostBtn>
-      <GhostBtn title="弹出窗口">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14 4h6v6" />
-          <path d="M20 4l-9 9" />
-          <path d="M9 4H5a1 1 0 00-1 1v14a1 1 0 001 1h14a1 1 0 001-1v-4" />
-        </svg>
-      </GhostBtn>
-    </div>
   </header>
 
   <div class="section-title"><span>配置</span></div>
@@ -70,7 +55,7 @@
       </PillBtn>
     </div>
   </div>
-  <CodeArea v-model="input" />
+  <CodeArea v-model="input" class="flex-1" />
 
   <div class="section-title">
     <span>输出</span>
@@ -100,13 +85,12 @@
       </PillBtn>
     </div>
   </div>
-  <CodeArea v-model="output" readonly />
+  <CodeArea v-model="output" readonly class="flex-1" />
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useMessage } from 'naive-ui'
-import GhostBtn from '@/components/ui/GhostBtn.vue'
 import PillBtn from '@/components/ui/PillBtn.vue'
 import Switch from '@/components/ui/Switch.vue'
 import CodeArea from '@/components/ui/CodeArea.vue'
@@ -155,7 +139,6 @@ async function copyOutput() {
   font-size: 28px; font-weight: 500;
   letter-spacing: -0.015em;
 }
-.page-actions { display: flex; gap: 4px; align-items: center; }
 
 .section-title {
   display: flex; align-items: center; justify-content: space-between;

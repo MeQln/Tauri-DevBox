@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "fs-tauri",
+  "productName": "DevBox",
   "version": "0.1.0",
   "identifier": "com.frontskeleton.fstauri",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "URL 编码 / 解码工具",
+        "title": "DevBox · 开发工具箱",
         "width": 1100,
         "height": 760,
         "minWidth": 880,

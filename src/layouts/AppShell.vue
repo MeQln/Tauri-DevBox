@@ -1,7 +1,7 @@
 <template>
   <div class="window grid grid-cols-[280px_1fr] w-screen h-screen min-h-0">
     <AsideNav />
-    <main class="bg-surface min-w-0 min-h-0 flex flex-col overflow-auto px-8 pt-[22px] pb-8">
+    <main class="bg-surface min-w-0 min-h-0 flex flex-col px-8 pt-[22px] pb-8 overflow-hidden">
       <router-view />
     </main>
   </div>

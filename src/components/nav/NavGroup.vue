@@ -4,7 +4,15 @@
       class="grid grid-cols-[22px_1fr_16px] items-center h-9 px-1.5 rounded-lg text-ink-3 text-[13.5px] cursor-pointer hover:bg-aside-2 transition-colors"
       @click="expanded = !expanded"
     >
-      <span></span>
+      <span class="inline-flex items-center justify-center">
+        <svg
+          v-if="iconSvg"
+          viewBox="0 0 24 24" width="16" height="16"
+          fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round"
+          v-html="iconSvg"
+        />
+      </span>
       <span>{{ group.label }}</span>
       <svg
         :class="['chev transition-transform', expanded ? '' : '-rotate-90']"
@@ -21,10 +29,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import NavItem from './NavItem.vue'
 import type { NavGroup } from '@/stores/nav'
+import { ICONS } from './icons'
 
 const props = defineProps<{ group: NavGroup }>()
 const expanded = ref(props.group.expanded)
+const iconSvg = computed(() => (props.group.icon ? ICONS[props.group.icon] : ''))
 </script>
