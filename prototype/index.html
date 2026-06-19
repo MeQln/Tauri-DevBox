@@ -71,17 +71,171 @@
       overflow: auto;
       padding: 22px 32px 32px;
     }
+
+    /* === ASIDE === */
+    .aside { display: grid; grid-template-rows: auto auto 1fr auto; }
+    .aside-head { display: flex; gap: 4px; padding: 10px 12px 6px; }
+    .icon-btn {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--ink-2); transition: background .15s;
+    }
+    .icon-btn:hover { background: var(--aside-2); }
+    .icon-btn svg { width: 16px; height: 16px; }
+    .search {
+      margin: 0 12px 8px; height: 34px;
+      background: var(--card-2);
+      border: 1px solid var(--rule); border-radius: 8px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 10px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search:focus-within {
+      border-color: #c5bfb4;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
+    }
+    .search svg { width: 14px; height: 14px; color: var(--ink-4); flex-shrink: 0; }
+    .search input { flex: 1; font-size: 13.5px; }
+    .search input::placeholder { color: var(--ink-4); }
+    .nav { padding: 4px 8px 8px; overflow-y: auto; scrollbar-width: thin; }
+    .nav::-webkit-scrollbar { width: 8px; }
+    .nav::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 4px; }
+    .group-head {
+      display: grid; grid-template-columns: 22px 1fr 16px; align-items: center;
+      height: 36px; padding: 0 6px; border-radius: 8px;
+      color: var(--ink-3); font-size: 13.5px;
+      cursor: pointer; transition: background .15s;
+    }
+    .group-head:hover { background: var(--aside-2); }
+    .group-head svg.gp-icon { width: 16px; height: 16px; }
+    .group-head .chev { transition: transform .2s; color: var(--ink-4); }
+    .group.collapsed .chev { transform: rotate(-90deg); }
+    .group.collapsed .group-body { display: none; }
+    .group-body { padding-left: 22px; }
+    .item {
+      display: grid; grid-template-columns: 22px 1fr auto;
+      align-items: center; gap: 4px;
+      height: 32px; padding: 0 6px; margin: 1px 0;
+      border-radius: 8px;
+      color: var(--ink-2); font-size: 13.5px;
+      cursor: pointer; transition: background .15s;
+    }
+    .item:hover { background: var(--aside-2); }
+    .item.active {
+      background: linear-gradient(180deg, #e1ddd4, #d5d0c5);
+      color: var(--ink); font-weight: 500;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+    }
+    .item .it-icon { width: 16px; height: 16px; }
+    .glyph {
+      width: 18px; height: 18px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 4px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: 9px; text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .bulb {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 0 4px rgba(232,165,52,0.18);
+    }
+    .aside-foot {
+      border-top: 1px solid var(--rule);
+      padding: 8px;
+    }
+    .aside-foot .item { color: var(--ink-2); }
   </style>
 </head>
 <body>
   <div class="window">
-    <aside class="aside"></aside>
+    <aside class="aside">
+      <div class="aside-head">
+        <button class="icon-btn" title="返回" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="icon-btn" title="折叠" aria-label="折叠">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" placeholder="输入以搜索工具…">
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="aside-foot" id="footNav"></div>
+    </aside>
     <main class="main"></main>
   </div>
   <script>
   (() => {
     'use strict';
-    // 后续任务在此填充
+    // === NAV DATA ===
+    const NAV = [
+      { type: 'item', glyph: 'QR', label: '二维码', hasUpdate: true },
+      { type: 'item', icon: 'link', label: 'URL', active: true },
+      { type: 'group', label: '测试工具', expanded: true, children: [
+        { type: 'item', glyph: '{;}', label: 'JSONPath' },
+        { type: 'item', glyph: '.*',  label: '正则表达式', hasUpdate: true },
+        { type: 'item', glyph: 'XM',  label: 'XML' },
+      ]},
+      { type: 'group', label: '格式化工具', expanded: true, children: [
+        { type: 'item', glyph: '{;}', label: 'JSON' },
+        { type: 'item', glyph: 'SQ',  label: 'SQL' },
+        { type: 'item', glyph: 'XM',  label: 'XML' },
+      ]},
+      { type: 'group', label: '生成器',   expanded: false, children: [] },
+      { type: 'group', label: '图像处理', expanded: false, children: [] },
+      { type: 'group', label: '文本处理', expanded: true, children: [
+        { type: 'item', glyph: 'TX', label: '转义 / 反转义' },
+        { type: 'item', glyph: '≡',  label: '列表比对' },
+        { type: 'item', glyph: 'MD', label: 'Markdown 预览' },
+      ]},
+    ];
+    const FOOT = [
+      { glyph: '⚙', label: '管理扩展' },
+      { glyph: '☰', label: '设置' },
+    ];
+
+    const ICON_LINK = '<svg class="it-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>';
+    const ICON_CHEV = '<svg class="chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+
+    function itemHTML(it) {
+      const left = it.icon === 'link' ? ICON_LINK
+                 : it.glyph ? `<span class="glyph">${it.glyph}</span>`
+                 : '<span></span>';
+      const right = it.hasUpdate ? '<span class="bulb"></span>' : '';
+      const cls = it.active ? 'item active' : 'item';
+      return `<div class="${cls}">${left}<span>${it.label}</span>${right}</div>`;
+    }
+
+    function groupHTML(g) {
+      const cls = g.expanded ? 'group' : 'group collapsed';
+      const body = g.children.map(itemHTML).join('');
+      return `<div class="${cls}">
+        <div class="group-head">
+          <span></span>
+          <span>${g.label}</span>
+          ${ICON_CHEV}
+        </div>
+        <div class="group-body">${body}</div>
+      </div>`;
+    }
+
+    function renderNav() {
+      const navEl = document.getElementById('nav');
+      navEl.innerHTML = NAV.map(n => n.type === 'group' ? groupHTML(n) : itemHTML(n)).join('');
+      // 分组折叠
+      navEl.querySelectorAll('.group-head').forEach(h => {
+        h.addEventListener('click', () => h.parentElement.classList.toggle('collapsed'));
+      });
+      // foot
+      document.getElementById('footNav').innerHTML = FOOT.map(f =>
+        `<div class="item"><span class="glyph">${f.glyph}</span><span>${f.label}</span><span></span></div>`
+      ).join('');
+    }
+    renderNav();
   })();
   </script>
 </body>
