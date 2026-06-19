@@ -2,7 +2,7 @@
   <div class="row-ctl">
     <span>{{ checked ? onLabel : offLabel }}</span>
     <label :class="['switch', { on: checked }]" @click.prevent="toggle">
-      <input type="checkbox" :checked="checked" @click.stop="toggle" />
+      <input type="checkbox" :checked="checked" tabindex="-1" />
     </label>
   </div>
 </template>
