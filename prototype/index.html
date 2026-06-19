@@ -146,6 +146,81 @@
       padding: 8px;
     }
     .aside-foot .item { color: var(--ink-2); }
+
+    /* === MAIN STATIC === */
+    .page-head {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .page-head h1 {
+      font-family: var(--serif);
+      font-size: 28px; font-weight: 500;
+      letter-spacing: -0.015em;
+    }
+    .page-actions { display: flex; gap: 4px; align-items: center; }
+    .ghost-btn {
+      height: 32px; padding: 0 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 8px; color: var(--ink-2); font-size: 13px;
+      transition: background .15s;
+    }
+    .ghost-btn:hover { background: var(--card); }
+    .ghost-btn svg { width: 14px; height: 14px; }
+
+    .section-title {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13.5px; font-weight: 500;
+      color: var(--ink-2);
+      margin: 12px 0 8px;
+    }
+    .section-actions { display: flex; gap: 4px; }
+
+    .config {
+      background: var(--card);
+      border-radius: var(--r-md);
+      padding: 6px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .row {
+      background: var(--card-2);
+      border-radius: 8px;
+      padding: 14px 16px;
+      min-height: 64px;
+      display: grid; grid-template-columns: 44px 1fr auto;
+      align-items: center; gap: 12px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+    }
+    .row-icon {
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--ink-2);
+    }
+    .row-icon svg { width: 18px; height: 18px; }
+    .row-title { font-size: 14px; font-weight: 500; }
+    .row-desc { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
+    .row-ctl { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-3); }
+
+    /* switch */
+    .switch {
+      position: relative;
+      width: 44px; height: 24px;
+      border-radius: 999px;
+      background: #d8d4cc;
+      transition: background .15s;
+      flex-shrink: 0;
+    }
+    .switch::after {
+      content: '';
+      position: absolute; top: 2px; left: 2px;
+      width: 20px; height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+      transition: transform .22s cubic-bezier(.2,.7,.2,1);
+    }
+    .switch input { position: absolute; opacity: 0; pointer-events: none; }
+    .switch.on { background: #1e1e21; }
+    .switch.on::after { transform: translateX(20px); }
   </style>
 </head>
 <body>
@@ -166,7 +241,55 @@
       <nav class="nav" id="nav"></nav>
       <div class="aside-foot" id="footNav"></div>
     </aside>
-    <main class="main"></main>
+    <main class="main">
+      <header class="page-head">
+        <h1>URL 编码 / 解码工具</h1>
+        <div class="page-actions">
+          <button class="ghost-btn" title="添加到收藏夹">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2 7-6.5-5-6.5 5 2-7L2 9h7z"/></svg>
+            <span>添加到收藏夹</span>
+          </button>
+          <button class="ghost-btn" title="弹出窗口" aria-label="弹出窗口">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M9 4H5a1 1 0 00-1 1v14a1 1 0 001 1h14a1 1 0 001-1v-4"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="section-title"><span>配置</span></div>
+      <div class="config">
+        <div class="row">
+          <span class="row-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11l-3-3"/><path d="M17 17H6l3 3"/></svg>
+          </span>
+          <div>
+            <div class="row-title">转换</div>
+            <div class="row-desc">选择你要使用的转换模式</div>
+          </div>
+          <div class="row-ctl">
+            <span id="labelTransform">编码</span>
+            <label class="switch on" id="switchTransformWrap">
+              <input type="checkbox" id="switchTransform" checked>
+            </label>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="row-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11l-3-3"/><path d="M17 17H6l3 3"/></svg>
+          </span>
+          <div>
+            <div class="row-title">Encoding / Decoding Multiline</div>
+            <div class="row-desc">Encode / Decode each line separately</div>
+          </div>
+          <div class="row-ctl">
+            <span id="labelMultiline">关闭</span>
+            <label class="switch" id="switchMultilineWrap">
+              <input type="checkbox" id="switchMultiline">
+            </label>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
   <script>
   (() => {
@@ -236,6 +359,27 @@
       ).join('');
     }
     renderNav();
+
+    // === SWITCH VISUAL ===
+    function bindSwitch(inputId, wrapId, labelId, onText, offText) {
+      const inp = document.getElementById(inputId);
+      const wrap = document.getElementById(wrapId);
+      const lbl = document.getElementById(labelId);
+      const sync = () => {
+        wrap.classList.toggle('on', inp.checked);
+        lbl.textContent = inp.checked ? onText : offText;
+      };
+      wrap.addEventListener('click', e => {
+        if (e.target.tagName !== 'INPUT') {
+          inp.checked = !inp.checked;
+          inp.dispatchEvent(new Event('change'));
+        }
+      });
+      inp.addEventListener('change', sync);
+      sync();
+    }
+    bindSwitch('switchTransform', 'switchTransformWrap', 'labelTransform', '编码', '解码');
+    bindSwitch('switchMultiline', 'switchMultilineWrap', 'labelMultiline', '开启', '关闭');
   })();
   </script>
 </body>
