@@ -54,13 +54,13 @@
     <!-- 右列 -->
     <div class="right-col">
       <!-- 右上：图片输入 -->
-      <div class="dropzone">
+      <div class="dropzone" @dragover.prevent @drop="onDrop">
         <p>将任意一个 BMP, GIF, JPEG, JPG, PBM, PNG, TGA, TIFF, WEBP 文件拖放到此处</p>
         <p class="muted">或者</p>
         <p>
-          <a class="link">浏览文件</a>
+          <a class="link" @click="onBrowseImage">浏览文件</a>
           <span class="sep">/</span>
-          <a class="link">粘贴</a>
+          <a class="link" @click="onPasteImage">粘贴</a>
         </p>
       </div>
 
@@ -81,6 +81,8 @@ import { ref } from 'vue'
 import { useMessage } from 'naive-ui'
 import PillBtn from '@/components/ui/PillBtn.vue'
 import { qrApi } from '@/api/qrcode'
+import { open as openDialog } from '@tauri-apps/plugin-dialog'
+import { readFile } from '@tauri-apps/plugin-fs'
 
 const input = ref('')
 const svgMarkup = ref('')
@@ -95,6 +97,61 @@ async function generate() {
   } catch (e) {
     const msg = typeof e === 'string' ? e : '生成失败'
     message.error(msg)
+  }
+}
+
+const IMAGE_EXTS = ['bmp', 'gif', 'jpeg', 'jpg', 'pbm', 'png', 'tga', 'tif', 'tiff', 'webp']
+
+let decodeReqId = 0
+
+async function decodeBytes(bytes: number[]) {
+  const my = ++decodeReqId
+  try {
+    const text = await qrApi.decode(bytes)
+    if (my === decodeReqId) input.value = text
+  } catch (e) {
+    if (my !== decodeReqId) return
+    const msg = typeof e === 'string' ? e : '未识别到二维码'
+    message.error(msg)
+  }
+}
+
+async function onDrop(e: DragEvent) {
+  e.preventDefault()
+  const file = e.dataTransfer?.files?.[0]
+  if (!file) return
+  if (!file.type.startsWith('image/')) {
+    message.warning('请拖入图片文件')
+    return
+  }
+  const buf = await file.arrayBuffer()
+  await decodeBytes(Array.from(new Uint8Array(buf)))
+}
+
+async function onBrowseImage() {
+  const path = await openDialog({
+    multiple: false,
+    filters: [{ name: '图片', extensions: IMAGE_EXTS }],
+  })
+  if (typeof path !== 'string') return
+  const data = await readFile(path)
+  await decodeBytes(Array.from(data))
+}
+
+async function onPasteImage() {
+  try {
+    const items = await navigator.clipboard.read()
+    for (const item of items) {
+      const imgType = item.types.find(t => t.startsWith('image/'))
+      if (!imgType) continue
+      const blob = await item.getType(imgType)
+      const buf = await blob.arrayBuffer()
+      await decodeBytes(Array.from(new Uint8Array(buf)))
+      return
+    }
+    message.warning('剪贴板中没有图片')
+  } catch {
+    message.warning('剪贴板中没有图片')
   }
 }
 </script>
