@@ -491,23 +491,14 @@
       for (let i = 0; i < n; i++) buf[i] = i + 1;
       el.textContent = buf.join('\n');
     }
-
     // === URL CONVERT ===
-    const inputEl = document.getElementById('input');
-    const outputEl = document.getElementById('output');
-    const gutterIn = document.getElementById('gutterInput');
-    const gutterOut = document.getElementById('gutterOutput');
-    const swTransform = document.getElementById('switchTransform');
-    const swMultiline = document.getElementById('switchMultiline');
-
-    function safeDecode(s) {
-      try { return decodeURIComponent(s); } catch { return s; }
-    }
+    const $ = id => document.getElementById(id);
+    const inputEl = $('input'), outputEl = $('output'), gutterIn = $('gutterInput'), gutterOut = $('gutterOutput'), swTransform = $('switchTransform'), swMultiline = $('switchMultiline');
     function convert() {
       const text = inputEl.value;
       const isEncode = swTransform.checked;
       const isMultiline = swMultiline.checked;
-      const fn = isEncode ? encodeURIComponent : safeDecode;
+      const fn = isEncode ? encodeURIComponent : (s => { try { return decodeURIComponent(s); } catch { return s; } });
       const result = isMultiline
         ? text.split('\n').map(fn).join('\n')
         : fn(text);
@@ -515,10 +506,7 @@
       updateGutter(gutterIn,  text.split('\n').length);
       updateGutter(gutterOut, result.split('\n').length);
     }
-
-    inputEl.addEventListener('input', convert);
-    swTransform.addEventListener('change', convert);
-    swMultiline.addEventListener('change', convert);
+    [[inputEl,'input'],[swTransform,'change'],[swMultiline,'change']].forEach(([el,ev])=>el.addEventListener(ev,convert));
     convert();   // 初始化（空输入空输出，行号 = 1）
   })();
   </script>
