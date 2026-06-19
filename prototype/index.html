@@ -508,6 +508,10 @@
     }
     [[inputEl,'input'],[swTransform,'change'],[swMultiline,'change']].forEach(([el,ev])=>el.addEventListener(ev,convert));
     convert();   // 初始化（空输入空输出，行号 = 1）
+    const toastEl = $('toast'); let toastTimer = null;
+    function showToast(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); if (toastTimer) clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1100); }
+    $('btnClear').addEventListener('click', () => { inputEl.value = ''; convert(); inputEl.focus(); });
+    $('btnCopy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(outputEl.textContent); showToast('已复制'); } catch { showToast('复制失败'); } });
   })();
   </script>
 </body>
