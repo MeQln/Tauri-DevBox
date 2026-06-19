@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL 编码 / 解码工具</title>
+  <style>
+    /* === TOKENS === */
+    :root {
+      --bg: #f6f5f3;
+      --surface: #ffffff;
+      --aside: #f1efeb;
+      --aside-2: #e9e6e0;
+      --aside-3: #ddd9d2;
+      --card: #f3f2ef;
+      --card-2: #ffffff;
+      --rule: #e3e0d9;
+      --rule-soft: #ecebe6;
+      --ink: #1d1d1f;
+      --ink-2: #4a4a4d;
+      --ink-3: #6f6e72;
+      --ink-4: #9a9893;
+      --ink-5: #c2c0bb;
+      --amber: #e8a534;
+      --amber-d: #b8821e;
+      --link: #2769d0;
+      --ok: #4f9a59;
+      --warn: #d97a3b;
+      --r-sm: 6px;
+      --r-md: 10px;
+      --r-lg: 14px;
+      --serif: 'Inter Tight', 'PingFang SC', 'Noto Sans SC', -apple-system, sans-serif;
+      --sans: 'Inter Tight', 'PingFang SC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+    }
+
+    /* === BASE === */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--sans);
+      color: var(--ink);
+      background: var(--surface);
+      overflow: hidden;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    input, textarea { font: inherit; color: inherit; outline: none; border: 0; background: none; resize: none; }
+    ul { list-style: none; }
+
+    /* === WINDOW === */
+    .window {
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 0;
+    }
+    .aside {
+      background: var(--aside);
+      border-right: 1px solid var(--rule);
+      min-width: 0; min-height: 0;
+    }
+    .main {
+      background: var(--surface);
+      min-width: 0; min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+      padding: 22px 32px 32px;
+    }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <aside class="aside"></aside>
+    <main class="main"></main>
+  </div>
+  <script>
+  (() => {
+    'use strict';
+    // 后续任务在此填充
+  })();
+  </script>
+</body>
+</html>
