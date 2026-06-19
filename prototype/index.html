@@ -221,6 +221,65 @@
     .switch input { position: absolute; opacity: 0; pointer-events: none; }
     .switch.on { background: #1e1e21; }
     .switch.on::after { transform: translateX(20px); }
+
+    /* === IO === */
+    .io {
+      border: 1px solid var(--rule);
+      border-radius: var(--r-md);
+      background: var(--card-2);
+      min-height: 240px;
+      display: grid; grid-template-columns: 56px 1fr;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .gutter {
+      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.012) 100%);
+      border-right: 1px solid var(--rule-soft);
+      padding: 12px 8px;
+      text-align: right;
+      font-family: var(--mono); font-size: 13px; line-height: 1.85;
+      color: var(--link);
+      white-space: pre;
+      user-select: none;
+    }
+    .io textarea, .io pre {
+      padding: 12px 14px;
+      font-family: var(--mono); font-size: 13px; line-height: 1.85;
+      white-space: pre-wrap; word-break: break-all;
+      width: 100%; height: 100%;
+      min-height: 216px;
+      color: var(--ink);
+    }
+    .io textarea { display: block; }
+    /* pill buttons */
+    .pill-btn {
+      height: 30px; padding: 0 10px;
+      border-radius: 8px;
+      background: var(--card);
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12.5px; color: var(--ink-2);
+      transition: background .15s;
+    }
+    .pill-btn:hover { background: #ebe9e3; }
+    .pill-btn:active { background: #e2dfd8; }
+    .pill-btn svg { width: 14px; height: 14px; }
+    .pill-btn.icon-only { width: 32px; padding: 0; justify-content: center; }
+
+    /* toast */
+    .toast {
+      position: fixed;
+      top: 24px; right: 24px;
+      padding: 8px 14px;
+      background: rgba(20,20,22,0.92);
+      color: #fff;
+      border-radius: 8px;
+      font-size: 13px;
+      opacity: 0; transform: translateY(-6px);
+      transition: opacity .15s, transform .15s;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
@@ -289,8 +348,52 @@
           </div>
         </div>
       </div>
+
+      <div class="section-title">
+        <span>输入</span>
+        <div class="section-actions">
+          <button class="pill-btn" title="粘贴">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-3"/></svg>
+            <span>粘贴</span>
+          </button>
+          <button class="pill-btn icon-only" title="读取文件" aria-label="读取文件">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+          </button>
+          <button class="pill-btn icon-only" id="btnClear" title="清空" aria-label="清空">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="io io-input">
+        <div class="gutter" id="gutterInput">1</div>
+        <textarea id="input" spellcheck="false"></textarea>
+      </div>
+
+      <div class="section-title">
+        <span>输出</span>
+        <div class="section-actions">
+          <button class="pill-btn icon-only" title="保存" aria-label="保存">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+          </button>
+          <button class="pill-btn" id="btnCopy" title="复制">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <span>复制</span>
+          </button>
+          <button class="pill-btn icon-only" title="展开" aria-label="展开">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          </button>
+          <button class="pill-btn icon-only" title="预览模式" aria-label="预览模式">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21h6M10 17a5 5 0 114 0v3h-4z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="io io-output">
+        <div class="gutter" id="gutterOutput">1</div>
+        <pre id="output"></pre>
+      </div>
     </main>
   </div>
+  <div class="toast" id="toast">已复制</div>
   <script>
   (() => {
     'use strict';
@@ -380,6 +483,14 @@
     }
     bindSwitch('switchTransform', 'switchTransformWrap', 'labelTransform', '编码', '解码');
     bindSwitch('switchMultiline', 'switchMultilineWrap', 'labelMultiline', '开启', '关闭');
+
+    // === GUTTER ===
+    function updateGutter(el, lines) {
+      const n = Math.max(1, lines | 0);
+      const buf = new Array(n);
+      for (let i = 0; i < n; i++) buf[i] = i + 1;
+      el.textContent = buf.join('\n');
+    }
   })();
   </script>
 </body>
