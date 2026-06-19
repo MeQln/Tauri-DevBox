@@ -47,7 +47,7 @@
       <textarea v-model="input" class="text-area" placeholder="在此输入要生成二维码的文本"></textarea>
 
       <div class="action-row">
-        <button class="primary-btn" :disabled="!input.trim()">生成二维码</button>
+        <button class="primary-btn" :disabled="!input.trim()" @click="generate">生成二维码</button>
       </div>
     </div>
 
@@ -68,7 +68,8 @@
       <div class="preview">
         <div class="preview-title">二维码</div>
         <div class="preview-body">
-          <span class="empty-hint">输入文本后点「生成二维码」</span>
+          <div v-if="svgMarkup" class="svg-wrap" v-html="svgMarkup" />
+          <span v-else class="empty-hint">输入文本后点「生成二维码」</span>
         </div>
       </div>
     </div>
@@ -77,9 +78,25 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useMessage } from 'naive-ui'
 import PillBtn from '@/components/ui/PillBtn.vue'
+import { qrApi } from '@/api/qrcode'
 
 const input = ref('')
+const svgMarkup = ref('')
+
+const message = useMessage()
+
+async function generate() {
+  const text = input.value.trim()
+  if (!text) return
+  try {
+    svgMarkup.value = await qrApi.encode(text)
+  } catch (e) {
+    const msg = typeof e === 'string' ? e : '生成失败'
+    message.error(msg)
+  }
+}
 </script>
 
 <style scoped>
@@ -168,4 +185,9 @@ const input = ref('')
 }
 .preview-body :deep(svg) { max-width: 100%; max-height: 100%; }
 .empty-hint { color: var(--ink-3); font-size: 13px; }
+.svg-wrap {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.svg-wrap :deep(svg) { width: min(100%, 320px); height: auto; }
 </style>
