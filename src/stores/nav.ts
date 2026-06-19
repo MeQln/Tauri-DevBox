@@ -23,8 +23,8 @@ export type NavGroup = {
 export type NavNode = NavItem | NavGroup
 
 export const NAV_DATA: NavNode[] = [
-  { type: 'item', id: 'qrcode',   glyph: 'QR', label: '二维码', hasUpdate: true },
-  { type: 'item', id: 'url',      icon: 'link', label: 'URL', active: true },
+  { type: 'item', id: 'qrcode',   glyph: 'QR', label: '二维码', hasUpdate: true, active: true },
+  { type: 'item', id: 'url',      icon: 'link', label: 'URL' },
   { type: 'group', id: 'g-test',  icon: 'flask', label: '测试工具', expanded: true, children: [
     { type: 'item', id: 'jsonpath', glyph: '{;}', label: 'JSONPath' },
     { type: 'item', id: 'regex',    glyph: '.*',  label: '正则表达式', hasUpdate: true },
@@ -52,7 +52,7 @@ export const FOOT_DATA: NavItem[] = [
 export const useNavStore = defineStore('nav', () => {
   const items = NAV_DATA
   const foot = FOOT_DATA
-  const activeId = ref<string>('url')
+  const activeId = ref<string>('qrcode')
 
   function select(id: string) {
     activeId.value = id
