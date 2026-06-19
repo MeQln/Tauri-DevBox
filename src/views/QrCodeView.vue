@@ -124,7 +124,13 @@ async function onDrop(e: DragEvent) {
     message.warning('请拖入图片文件')
     return
   }
-  const buf = await file.arrayBuffer()
+  let buf
+  try {
+    buf = await file.arrayBuffer()
+  } catch {
+    message.error('读取文件失败')
+    return
+  }
   await decodeBytes(Array.from(new Uint8Array(buf)))
 }
 
@@ -134,25 +140,37 @@ async function onBrowseImage() {
     filters: [{ name: '图片', extensions: IMAGE_EXTS }],
   })
   if (typeof path !== 'string') return
-  const data = await readFile(path)
+  let data
+  try {
+    data = await readFile(path)
+  } catch {
+    message.error('读取文件失败')
+    return
+  }
   await decodeBytes(Array.from(data))
 }
 
 async function onPasteImage() {
+  let items
   try {
-    const items = await navigator.clipboard.read()
-    for (const item of items) {
-      const imgType = item.types.find(t => t.startsWith('image/'))
-      if (!imgType) continue
-      const blob = await item.getType(imgType)
-      const buf = await blob.arrayBuffer()
-      await decodeBytes(Array.from(new Uint8Array(buf)))
-      return
+    items = await navigator.clipboard.read()
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'NotAllowedError') {
+      message.error('未授予剪贴板权限')
+    } else {
+      message.error('读取剪贴板失败')
     }
-    message.warning('剪贴板中没有图片')
-  } catch {
-    message.warning('剪贴板中没有图片')
+    return
   }
+  for (const item of items) {
+    const imgType = item.types.find(t => t.startsWith('image/'))
+    if (!imgType) continue
+    const blob = await item.getType(imgType)
+    const buf = await blob.arrayBuffer()
+    await decodeBytes(Array.from(new Uint8Array(buf)))
+    return
+  }
+  message.warning('剪贴板中没有图片')
 }
 
 async function pasteText() {
