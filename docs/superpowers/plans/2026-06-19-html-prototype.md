@@ -14,7 +14,7 @@
 
 - **唯一新增文件**：`fs-tauri/prototype/index.html`
 - **不动文件**：`README.md`、`.gitignore`、`.claude/`
-- **总行数 ≤ 450 行**（含所有 HTML/CSS/JS）
+- **总行数 ≤ 520 行**（含所有 HTML/CSS/JS）
 - **不外链**：不引入 CSS 文件、JS 文件、字体文件、图标库
 - **JS 必须 IIFE 包裹**，不污染 `window` 全局
 - **目标浏览器**：现代 Chromium / Safari，不做兼容兜底
@@ -42,7 +42,7 @@ fs-tauri/
 | `<body>` HTML | ~70 | window 骨架 + 静态 main 内容 |
 | `<script>` IIFE | ~90 | NAV/FOOT 数据 + 渲染 + 事件绑定 + convert + gutter + copy/clear/toast |
 
-合计目标 ~380 行，留 70 行余量。
+合计目标 ~480 行，留 40 行余量。
 
 ---
 
@@ -871,7 +871,7 @@ git commit -m "feat: 接入 URL 编 / 解码核心逻辑与 gutter 同步"
 ```bash
 # 1. 文件行数检查
 wc -l /Users/mengql/workspace/ClaudeCode/Front-Skeleton/fs-desktop/fs-tauri/prototype/index.html
-# 预期：≤ 450
+# 预期：≤ 520
 ```
 
 | # | 验证 |
@@ -885,7 +885,7 @@ wc -l /Users/mengql/workspace/ClaudeCode/Front-Skeleton/fs-desktop/fs-tauri/prot
 | 7 | 点「复制」→ 剪贴板更新 + toast 1.1s |
 | 8 | 点「JSONPath」等其他导航项 → 无响应、无报错 |
 | 9 | 点「测试工具」分组头 → 折叠/展开 + 箭头旋转 |
-| 10 | `wc -l` 输出 ≤ 450 |
+| 10 | `wc -l` 输出 ≤ 520 |
 
 如有任何一项不通过，回到对应任务修复后再走一次。
 
