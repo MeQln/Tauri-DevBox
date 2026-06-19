@@ -9,32 +9,32 @@
       <div class="section-title">
         <span>文本</span>
         <div class="section-actions">
-          <PillBtn title="粘贴">
+          <PillBtn title="粘贴" @click="pasteText">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="3" width="6" height="4" rx="1" />
               <path d="M9 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-3" />
             </svg>
             <span>粘贴</span>
           </PillBtn>
-          <PillBtn icon-only title="读取文件">
+          <PillBtn icon-only title="读取文件" @click="readTextFromFile">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M14 3v5h5" />
               <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8z" />
             </svg>
           </PillBtn>
-          <PillBtn icon-only title="清空">
+          <PillBtn icon-only title="清空" @click="clearInput">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>
           </PillBtn>
           <span class="divider" />
-          <PillBtn icon-only title="保存">
+          <PillBtn icon-only title="保存" @click="saveText">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
               <path d="M17 21v-8H7v8M7 3v5h8" />
             </svg>
           </PillBtn>
-          <PillBtn title="复制">
+          <PillBtn title="复制" @click="copyText">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="9" width="13" height="13" rx="2" />
               <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
@@ -81,8 +81,8 @@ import { ref } from 'vue'
 import { useMessage } from 'naive-ui'
 import PillBtn from '@/components/ui/PillBtn.vue'
 import { qrApi } from '@/api/qrcode'
-import { open as openDialog } from '@tauri-apps/plugin-dialog'
-import { readFile } from '@tauri-apps/plugin-fs'
+import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog'
+import { readFile, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
 
 const input = ref('')
 const svgMarkup = ref('')
@@ -152,6 +152,54 @@ async function onPasteImage() {
     message.warning('剪贴板中没有图片')
   } catch {
     message.warning('剪贴板中没有图片')
+  }
+}
+
+async function pasteText() {
+  try {
+    input.value = await navigator.clipboard.readText()
+  } catch {
+    message.error('粘贴失败')
+  }
+}
+
+async function readTextFromFile() {
+  const path = await openDialog({
+    multiple: false,
+    filters: [{ name: '文本', extensions: ['txt', 'md', 'log', 'json', 'csv'] }],
+  })
+  if (typeof path !== 'string') return
+  try {
+    input.value = await readTextFile(path)
+  } catch {
+    message.error('读取文件失败')
+  }
+}
+
+function clearInput() {
+  input.value = ''
+}
+
+async function saveText() {
+  const path = await saveDialog({
+    filters: [{ name: '文本', extensions: ['txt'] }],
+    defaultPath: 'qrcode-text.txt',
+  })
+  if (typeof path !== 'string') return
+  try {
+    await writeTextFile(path, input.value)
+    message.success('已保存')
+  } catch {
+    message.error('保存失败')
+  }
+}
+
+async function copyText() {
+  try {
+    await navigator.clipboard.writeText(input.value)
+    message.success('已复制')
+  } catch {
+    message.error('复制失败')
   }
 }
 </script>
