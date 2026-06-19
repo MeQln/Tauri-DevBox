@@ -1,197 +1,181 @@
-# fs-tauri HTML 原型设计稿
+# DevBox UI 设计约束
 
-> 日期：2026-06-19
-> 范围：仅 `URL 编码 / 解码工具` 这一屏的纯 HTML 静态原型
-> 产物：`prototype/index.html`（单文件）
+> 本文是 UI 视觉与交互的单一真源。技术架构、构建、命名层级见 [`CLAUDE.md`](CLAUDE.md)。
+
+视觉与交互的最终参照是 [`prototype/index.html`](prototype/index.html)（DevToys 风原型）。当原型与本文冲突时，**以原型为准**，并修订本文使其重新对齐。
 
 ---
 
-## 一、背景
+## 一、视觉
 
-`fs-tauri` 是 `Front-Skeleton/fs-desktop/` 下规划中的 Tauri 桌面工具集项目，当前仓库仅有 README 与 `.git`，尚未初始化 Tauri 工程。
+颜色 / 圆角 / 字体栈集中在 `src/styles/tokens.css`（26 个 CSS 变量），是唯一真源。Tailwind 仅暴露常用子集（`bg-aside`、`text-ink-2`、`rounded-md` 等），剩余在 scoped CSS 里直接用 `var(--xxx)`。
 
-兄弟项目 `fs-vue/fs-desktop/` 已存在一份完整的 DevToys 风格 Web 原型（`prototype/index.html` 973 行）和详细设计规范（`DESIGN.md`）。本次任务**不复用**那份原型，而是基于用户提供的截图，从零写一份只覆盖 `URL` 工具页的精简版原型，作为后续 Tauri 落地的视觉与交互参考。
+新增 / 调整 token 时**先改 `tokens.css`**，再决定是否暴露到 Tailwind。
 
-## 二、目标
+### 颜色
 
-- 视觉上与用户截图一致（左侧导航 + 右侧 URL 编/解码工具页）
-- 双击 HTML 即可在浏览器预览，无构建、无依赖
-- URL 编/解码核心交互真实可用（输入即输出 + 开关切换 + 复制 + 清空）
-- 文件总行数 ≤ 450 行
+| 类别 | 变量 | 用途 |
+|---|---|---|
+| Surface | `--bg #f6f5f3` / `--surface #ffffff` | 页面 / 主区底 |
+| Aside | `--aside #f1efeb` / `--aside-2 #e9e6e0` / `--aside-3 #ddd9d2` | 侧栏底 / hover / active 渐变下色 |
+| Card | `--card #f3f2ef` / `--card-2 #ffffff` | 配置卡 / 行内卡 |
+| Rule | `--rule #e3e0d9` / `--rule-soft #ecebe6` | 主分割线 / 次分割线 |
+| Ink | `--ink #1d1d1f` → `--ink-5 #c2c0bb` | 文字色阶（5 级，越小越深） |
+| Accent | `--amber #e8a534` / `--amber-d #b8821e` | 警告 / 强调（如「有更新」bulb） |
+| Semantic | `--link #2769d0` / `--ok #4f9a59` / `--warn #d97a3b` | 行号 / 成功 / 警告 |
 
-## 三、非目标（明确不做）
+### 圆角
 
-- macOS 标题栏与 traffic lights（与图片一致）
-- 其他工具页（JSONPath、JSON、SQL、正则等导航项**纯静态**，点击无响应）
-- 「粘贴」「读文件」「保存」「展开」「灯泡预览模式」「添加到收藏夹」「弹出窗口」按钮（仅视觉，无功能）
-- 搜索框过滤（仅可输入，不做导航过滤）
-- 响应式（不实现 980px 断点）
-- 暗色模式、键盘快捷键、ARIA 无障碍、单元测试
+| 变量 | 值 | 用途 |
+|---|---|---|
+| `--r-sm` | 6px | （预留） |
+| `--r-md` | 10px | 配置卡 / IO 区 |
+| `--r-lg` | 14px | （预留） |
 
-## 四、产物清单
+按钮 / 菜单项独立用 `8px`（不在 token 中）以贴合原型。
 
-```
-fs-tauri/
-└── prototype/
-    └── index.html        ← 唯一新增文件
-```
-
-不动：`README.md`、`.gitignore`、`.claude/`。
-
-预览方式：浏览器直接打开 `prototype/index.html`，无需服务器。
-
-## 五、布局
-
-整屏 `100vw × 100vh`，CSS Grid 两栏：`280px / 1fr`。
+### 字体
 
 ```
-window
-├── aside (280px)
-│   ├── aside-head    返回按钮 / 折叠按钮
-│   ├── search        搜索输入框（仅视觉，可输入但不过滤）
-│   ├── nav           导航（NAV 数据驱动渲染）
-│   └── aside-foot    管理扩展 / 设置
-└── main (1fr，可滚动)
-    ├── page-head     H1 标题 + 收藏 / 弹窗按钮
-    ├── section-title 配置
-    ├── config        2 行 row（转换开关 + Multiline 开关）
-    ├── section-title 输入 + [粘贴/读文件/清空]
-    ├── io-input      gutter 56px + textarea
-    ├── section-title 输出 + [保存/复制/展开/灯泡]
-    ├── io-output     gutter 56px + pre
-    └── toast         右上角浮层（复制成功提示）
+sans  Inter Tight, PingFang SC, Noto Sans SC, -apple-system, BlinkMacSystemFont, sans-serif
+mono  JetBrains Mono, ui-monospace, Menlo, Consolas, monospace
+serif Inter Tight, PingFang SC, Noto Sans SC, -apple-system, sans-serif  （H1 用）
 ```
 
-关键尺寸：
+不引入 woff2 字体文件，依赖系统回退。
 
-| 项 | 值 |
+### 过渡
+
+- 标准 `.15s`（hover / 颜色切换）
+- 滑动 `.22s cubic-bezier(.2, .7, .2, 1)`（开关滑块）
+
+---
+
+## 二、整体布局
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ window  100vw × 100vh    grid-cols-[280px 1fr]               │
+├────────────┬─────────────────────────────────────────────────┤
+│ AsideNav   │ main  bg-surface  flex-col  px-8 pt-[22px] pb-8 │
+│ 280px      │   ├─ page-head        H1                        │
+│ bg-aside   │   ├─ section-title    配置                      │
+│            │   ├─ config           (2 row)                   │
+│            │   ├─ section-title    输入 + actions            │
+│            │   ├─ CodeArea  (flex-1, 输入)                   │
+│            │   ├─ section-title    输出 + actions            │
+│            │   └─ CodeArea  (flex-1, 输出 readonly)          │
+└────────────┴─────────────────────────────────────────────────┘
+
+最小窗口  880 × 600     默认窗口  1100 × 760
+```
+
+**自适应**：宽度由 `[280px 1fr]` 网格驱动；高度由两个 `<CodeArea class="flex-1">` 平分主区剩余空间——**不要给 CodeArea 加 `min-height`**，会破坏平分。
+
+---
+
+## 三、组件视觉规范
+
+### 侧栏 AsideNav
+
+- 三段：搜索框 → 导航 → footer，分别由 grid `[auto 1fr auto]` 行划分
+- 顶部留 `pt-2.5` 替代之前的 head 区
+- 搜索框 `34px` 高、`1px solid var(--rule)` 描边、focus 时 `border #c5bfb4` + `box-shadow 0 0 0 3px rgba(0,0,0,0.04)`；**只接受输入，不做过滤**（仅占位）
+- footer 与导航之间用 `border-t border-rule` 分割
+
+### NavItem（菜单项）
+
+- 高度 `32px`，圆角 `8px`，左右内边距 `6px`
+- 网格 `[22px | 1fr]`：左槽放 SVG / glyph，右栏 label
+- **active 状态**：`linear-gradient(180deg, #e1ddd4, #d5d0c5)` 背景 + `inset 0 0 0 1px rgba(0,0,0,0.04)` 内描 + `font-weight: 500`
+- **hover**：`bg-aside-2`
+- 不渲染右侧圆点（之前的 `hasUpdate` bulb 已移除，但字段保留以备未来复用）
+
+### NavGroup（分组头）
+
+- 高度 `36px`，网格 `[22px | 1fr | 16px]`：左槽 SVG 图标、中间 label、右侧箭头
+- **折叠 / 展开**：点击切换 `expanded`；`v-show` 控制子项；箭头 `-rotate-90` 与 0 之间过渡
+
+### 顶层节点之间的分割线
+
+`AsideNav` 循环渲染时，**当前节点 `type` 与前一个不同**则插入 `<hr>` 分隔（`my-1.5 mx-1.5 border-0 border-t border-rule`）。当前数据下只在 `url`（item）↔ `g-test`（group）之间出现一条；group ↔ group 不画线。
+
+### 图标
+
+侧栏图标统一从 `src/components/nav/icons.ts` 的 `ICONS` 表取，lucide 风 SVG inner markup（24×24 viewBox，stroke 风，1.5/2 px 描边），通过 `v-html` 注入 `<svg width="16" height="16" stroke="currentColor">`。新增图标只需在 `icons.ts` 加 key，store 中相应节点写 `icon: 'newkey'`。
+
+### Switch（滑动开关）
+
+- `44 × 24px`、圆角 `999px`
+- 滑块 `20 × 20px`，white + `box-shadow 0 1px 2px rgba(0,0,0,0.18)`
+- on 态：背景 `#1e1e21`，滑块 `translateX(20px)`
+- 标签文字在开关左侧（`row-ctl` 容器，`text-ink-3 text-12.5px`）
+- **事件绑定只在 `<label>`**，`<input>` 仅作可访问性挂载（`tabindex="-1"`）；不要给 input 加 `@click`，会导致 label-input 自动 click 链路双触发
+
+### PillBtn / GhostBtn
+
+- **PillBtn**：`30 × auto`，圆角 `8px`，背景 `var(--card)`，hover `#ebe9e3`，active `#e2dfd8`；`icon-only` 变体宽度固定 `32px`；内嵌 SVG 统一 `14 × 14`
+- **GhostBtn**：仅在页头使用（已移除）；如未来复用，参考 `prototype/index.html`
+
+### CodeArea（输入 / 输出区）
+
+- 容器 `.io`：`1px solid var(--rule)` 描边、圆角 `var(--r-md)`、背景 `var(--card-2)`、`min-h-0`（允许 flex shrink）
+- 网格 `[56px | 1fr]`：左 gutter 行号、右 content
+- gutter：右对齐、字体 `var(--mono) 13px`、行高 `1.85`、字色 `var(--link)`、`white-space: pre`、`user-select: none`
+- content：`padding 12px 14px`、`white-space: pre-wrap`、`word-break: break-all`、`overflow: auto`（自滚）
+- `readonly === true` 渲染 `<pre>`、否则 `<textarea>`（**不**统一为 `textarea readonly`，贴合原型 HTML 结构）
+
+### Toast / Message
+
+仅用 `useMessage()` 的 `success / error`，不引入 `useDialog` / `useNotification`。文案：「已复制」 / 「复制失败」。
+
+---
+
+## 四、文案规范
+
+- 全中文（原型已确定的中英混排短语保留，如「Encoding / Decoding Multiline」）
+- 标题用全角斜杠 `/` 与半角空格组合，如「URL 编码 / 解码工具」「转义 / 反转义」
+- 「即将上线」用于占位页（PlaceholderView）
+- **产品名固定 `DevBox`**：窗口标题 `DevBox · 开发工具箱`、页内不出现「fs-tauri」字样
+
+---
+
+## 五、交互约束
+
+- 单输入 → 单输出，**输出区只读**（`<CodeArea readonly>`），用户不可编辑
+- 输入 / 开关变化触发 watcher，结果立即写回输出区（无防抖；本地 invoke 往返 < 1ms 不需要）
+- 点击行为对外可见性：当前 URL 工具页之外的导航项**点击都跳转**到 `/tools/:id` 占位页；`AsideNav` 的搜索框、PillBtn 的「粘贴 / 读取文件 / 保存 / 展开 / 预览模式」**仅视觉**，无交互
+
+### 错误的 UI 表现
+
+| 错误源 | 表现 |
 |---|---|
-| 侧栏宽度 | 280px |
-| 主区内边距 | 22px 32px 32px |
-| 配置卡 row 高度 | min-height 64px |
-| 输入 / 输出区 min-height | 240px / 240px（等高） |
-| 行号 gutter 宽度 | 56px |
+| Rust decode 非法 percent 序列 | 输出原文（用户视角下相当于"无变化"） |
+| 前端 watcher invoke 失败 | 静默，保留上次输出（不弹 toast，不打扰） |
+| 剪贴板权限 / 失败 | `n-message.error('复制失败')` 右上角 toast |
 
-## 六、视觉 Token
+详细策略与代码位置见 `CLAUDE.md`。
 
-直接复用 `fs-vue/fs-desktop/DESIGN.md` §2 全部 token：
+---
 
-- **颜色**：Surface（`--bg #f6f5f3` / `--surface #ffffff` / `--aside #f1efeb` 等）/ Ink（`--ink #1d1d1f` 等）/ Accent（`--amber #e8a534`）
-- **圆角**：`--r-sm 6px` / `--r-md 10px` / `--r-lg 14px`
-- **字体**：sans 用 `Inter Tight, PingFang SC, Noto Sans SC, -apple-system`；mono 用 `JetBrains Mono, ui-monospace, Menlo`
-- **过渡**：标准 `.15s`、滑动 `.22s cubic-bezier(.2,.7,.2,1)`
+## 六、不做项（UI 范畴）
 
-不引入外部字体文件，仅在 `font-family` 声明字体栈。
-
-## 七、导航数据（写死）
-
-```js
-const NAV = [
-  { type: 'item', glyph: 'QR', label: '二维码', hasUpdate: true },
-  { type: 'item', icon: 'link', label: 'URL', active: true },
-  { type: 'group', label: '测试工具', expanded: true, children: [
-    { type: 'item', glyph: '{;}', label: 'JSONPath' },
-    { type: 'item', glyph: '.*',  label: '正则表达式', hasUpdate: true },
-    { type: 'item', glyph: 'XM',  label: 'XML' },
-  ]},
-  { type: 'group', label: '格式化工具', expanded: true, children: [
-    { type: 'item', glyph: '{;}', label: 'JSON' },
-    { type: 'item', glyph: 'SQ',  label: 'SQL' },
-    { type: 'item', glyph: 'XM',  label: 'XML' },
-  ]},
-  { type: 'group', label: '生成器',   expanded: false, children: [] },
-  { type: 'group', label: '图像处理', expanded: false, children: [] },
-  { type: 'group', label: '文本处理', expanded: true, children: [
-    { type: 'item', glyph: 'TX', label: '转义 / 反转义' },
-    { type: 'item', glyph: '≡',  label: '列表比对' },
-    { type: 'item', glyph: 'MD', label: 'Markdown 预览' },
-  ]},
-];
-
-const FOOT = [
-  { icon: 'gear',     label: '管理扩展' },
-  { icon: 'settings', label: '设置' },
-];
-```
-
-**交互：**
-- 仅 `URL` 项 active；其他项 hover 有底色但**点击无响应**
-- 分组头点击切换 `.collapsed` 类（CSS 控制展开 / 折叠 + 箭头旋转）
-- 搜索框可输入，不做过滤
-
-## 八、URL 编 / 解码逻辑
-
-**默认状态（与截图一致）：**
-- 「转换」开关 = 编码（`checked = true`）
-- 「Multiline」开关 = 关闭（`checked = false`）
-- 输入框为空，输出框为空，两边行号均显示 `1`
-
-**可工作的部分：**
-
-| 触发 | 行为 |
+| 项 | 理由 |
 |---|---|
-| 输入框 `input` 事件 | 立即调用 `convert()` |
-| 「转换」开关切换 | 立即重新 `convert()` |
-| 「Multiline」开关切换 | 立即重新 `convert()` |
-| 输入区「清空」按钮 | 清空输入 + 输出，行号重置为 1 |
-| 输出区「复制」按钮 | `navigator.clipboard.writeText` + toast「已复制」1.1s |
+| 暗色模式 | YAGNI，原型未设计 |
+| 国际化 i18n | 仅中文 |
+| 响应式 / 移动端断点 | 桌面应用，最小窗口 880 已限定 |
+| 自定义主题色 / 用户配置 | 当前阶段无 |
+| 动画曲线之外的过渡（弹簧、惯性等） | 已用 `cubic-bezier(.2, .7, .2, 1)` 与 `.15s` 标准 |
+| ARIA 完整无障碍 | 仅基础 `aria-label` / `title`；不为屏幕阅读器做完整支持 |
 
-**核心函数：**
+---
 
-```js
-function convert() {
-  const text = input.value;
-  const isEncode = switchTransform.checked;
-  const isMultiline = switchMultiline.checked;
-  const fn = isEncode ? encodeURIComponent : safeDecode;
-  const result = isMultiline
-    ? text.split('\n').map(fn).join('\n')
-    : fn(text);
-  output.textContent = result;
-  updateGutters();
-}
+## 七、修订规则
 
-function safeDecode(s) {
-  try { return decodeURIComponent(s); } catch { return s; }
-}
-```
+UI 改动时：
 
-**错误处理（最小化）：**
-- 解码失败保留原文，不抛错
-- 剪贴板 API 失败 → toast「复制失败」
-
-## 九、行号 gutter
-
-- 输入：`Math.max(1, input.value.split('\n').length)`
-- 输出：`Math.max(1, output.textContent.split('\n').length)`
-- gutter 内容：`Array.from({length: n}, (_, i) => i + 1).join('\n')` 写到 `.gutter > pre`
-- 空内容时显示 `1`
-
-## 十、实现约束
-
-- HTML / CSS / JS 全部内联在 `index.html`，不外链 CSS/JS/字体
-- JS 包在 IIFE 里，不污染全局
-- SVG 内联，按钮内统一 14×14，icon-btn 内 16×16
-- 总行数 ≤ 450 行
-- 仅目标现代 Chromium / Safari，不做兼容兜底
-
-## 十一、验收标准
-
-| # | 验证点 |
-|---|---|
-| 1 | 浏览器打开**无 console 报错** |
-| 2 | 视觉与用户截图整体一致 |
-| 3 | 输入 `hello world` → 输出 `hello%20world` |
-| 4 | 切到「解码」+ 输入 `hello%20world` → 输出 `hello world` |
-| 5 | Multiline + 编码 + 多行输入 → 多行各自独立编码 |
-| 6 | 点「清空」→ 输入 / 输出 / 行号都重置 |
-| 7 | 点「复制」→ 剪贴板更新 + toast 1.1s |
-| 8 | 点其他导航项 → 无切换、无报错 |
-| 9 | 点分组头 → 折叠 / 展开 + 箭头旋转 |
-| 10 | `wc -l prototype/index.html` ≤ 450 |
-
-## 十二、参考
-
-- 视觉参考：用户提供的截图（DevToys 风 URL 编 / 解码工具页）
-- Token 参考：`fs-vue/fs-desktop/DESIGN.md` §2
-- 信息架构参考：`fs-vue/fs-desktop/prototype/index.html`（仅参考，不复用代码）
+1. 改原型 `prototype/index.html` 或本文，二者**不能**同时落后于代码
+2. 颜色 / 圆角 / 字体先进 `tokens.css`，再决定 Tailwind 暴露
+3. 自定义元件（Switch / Pill / CodeArea / NavItem 等）保留 scoped CSS；不强求 Tailwind 化
+4. 新增 Naive UI 组件需评估是否破坏「原型优先」基线——默认**不**用 `n-switch` / `n-button` / `n-input`
