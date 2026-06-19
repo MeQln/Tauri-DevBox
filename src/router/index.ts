@@ -8,6 +8,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '', redirect: '/tools/url' },
       { path: 'tools/url', component: () => import('@/views/UrlView.vue') },
+      { path: 'tools/qrcode', component: () => import('@/views/QrCodeView.vue') },
       { path: 'tools/:id', component: () => import('@/views/PlaceholderView.vue') },
     ],
   },
