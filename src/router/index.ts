@@ -1,9 +1,16 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import AppShell from '@/layouts/AppShell.vue'
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', redirect: '/tools/url' },
-  { path: '/tools/url', component: () => import('@/views/UrlView.vue') },
-  { path: '/tools/:id', component: () => import('@/views/PlaceholderView.vue') },
+  {
+    path: '/',
+    component: AppShell,
+    children: [
+      { path: '', redirect: '/tools/url' },
+      { path: 'tools/url', component: () => import('@/views/UrlView.vue') },
+      { path: 'tools/:id', component: () => import('@/views/PlaceholderView.vue') },
+    ],
+  },
 ]
 
 export const router = createRouter({
