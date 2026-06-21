@@ -51,7 +51,7 @@
     <div class="right-col">
       <!-- 右上：图片输入 -->
       <div class="dropzone" @dragover.prevent @drop="onDrop">
-        <p>将任意一个 BMP, GIF, JPEG, JPG, PBM, PNG, TGA, TIFF, WEBP 文件拖放到此处</p>
+        <p>将任意一个 BMP, GIF, JPEG, JPG, PBM, PNG, TGA, TIF, TIFF, WEBP 文件拖放到此处</p>
         <p class="muted">或者</p>
         <p>
           <a class="link" @click="onBrowseImage">浏览文件</a>
@@ -86,22 +86,19 @@ const svgMarkup = ref('')
 const message = useMessage()
 
 // 实时生成：输入文本变化即调 Rust 编码；空文本清空预览。
-// reqId 防止旧响应覆盖新结果；编码失败保留上次预览，仅 toast 一次（沿用 URL 工具的静默策略对失败不打扰用户）。
+// reqId 防止旧响应覆盖新结果；编码失败保留上次预览，不打扰用户（沿用 URL 工具的 watcher 静默策略，见项目 CLAUDE.md "错误处理反原则"）。
 let encodeReqId = 0
 watch(input, async (text) => {
-  const trimmed = text.trim()
   const my = ++encodeReqId
-  if (!trimmed) {
+  if (!text) {
     svgMarkup.value = ''
     return
   }
   try {
-    const svg = await qrApi.encode(trimmed)
+    const svg = await qrApi.encode(text)
     if (my === encodeReqId) svgMarkup.value = svg
-  } catch (e) {
-    if (my !== encodeReqId) return
-    const msg = typeof e === 'string' ? e : '生成失败'
-    message.error(msg)
+  } catch {
+    // 静默：保留上次 svgMarkup
   }
 }, { immediate: true })
 
@@ -170,8 +167,13 @@ async function onPasteImage() {
   for (const item of items) {
     const imgType = item.types.find(t => t.startsWith('image/'))
     if (!imgType) continue
-    const blob = await item.getType(imgType)
-    const buf = await blob.arrayBuffer()
+    let buf: ArrayBuffer
+    try {
+      const blob = await item.getType(imgType)
+      buf = await blob.arrayBuffer()
+    } catch {
+      continue
+    }
     await decodeBytes(Array.from(new Uint8Array(buf)))
     return
   }
