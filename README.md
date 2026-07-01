@@ -122,10 +122,6 @@ fs-tauri/
 └── docs/superpowers/         #   设计 spec 与实现计划
 ```
 
-## 不做项
-
-spec 明确禁止，除非用户明确要求：暗色模式、国际化、自动更新、系统托盘、ESLint / Prettier、前端单测 / E2E、Tailwind 暗色配置。
-
 ## License
 
-私有项目，未开源。
+[MIT](./LICENSE) © 2026 MeQln
