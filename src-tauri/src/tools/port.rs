@@ -91,19 +91,36 @@ mod tests {
     use super::*;
     use std::net::IpAddr;
 
-    /// 构造一个 TCP LISTEN socket，便于测试打桩。
-    /// remote_addr/remote_port 对 build_entries 无意义，给占位值即可。
-    fn tcp_listen(addr: &str, port: u16, pids: Vec<u32>) -> netstat2::SocketInfo {
+    /// 构造一个 TCP socket 字面量，便于测试打桩。
+    /// remote_addr/remote_port 对 build_entries 无意义（非 LISTEN 直接被过滤，
+    /// LISTEN 不读 remote 字段），统一给占位值。
+    /// Linux/Android 上 SocketInfo 多两个 cfg 字段 inode/uid，在此一并填占位 0，
+    /// 让所有测试字面量只经此 helper 构造，cfg 字段只写一次。
+    fn tcp_state(
+        addr: &str,
+        port: u16,
+        pids: Vec<u32>,
+        state: netstat2::TcpState,
+    ) -> netstat2::SocketInfo {
         netstat2::SocketInfo {
             protocol_socket_info: netstat2::ProtocolSocketInfo::Tcp(netstat2::TcpSocketInfo {
                 local_addr: addr.parse::<IpAddr>().unwrap(),
                 local_port: port,
                 remote_addr: "0.0.0.0".parse::<IpAddr>().unwrap(),
                 remote_port: 0,
-                state: netstat2::TcpState::Listen,
+                state,
             }),
             associated_pids: pids,
+            #[cfg(any(target_os = "linux", target_os = "android"))]
+            inode: 0,
+            #[cfg(any(target_os = "linux", target_os = "android"))]
+            uid: 0,
         }
+    }
+
+    /// 构造一个 TCP LISTEN socket（tcp_state 的常用包装）。
+    fn tcp_listen(addr: &str, port: u16, pids: Vec<u32>) -> netstat2::SocketInfo {
+        tcp_state(addr, port, pids, netstat2::TcpState::Listen)
     }
 
     /// 非 LISTEN 状态的 socket 必须被过滤掉。
@@ -111,16 +128,12 @@ mod tests {
     fn build_entries_filters_non_listen() {
         let sockets = vec![
             tcp_listen("0.0.0.0", 8080, vec![100]),
-            netstat2::SocketInfo {
-                protocol_socket_info: netstat2::ProtocolSocketInfo::Tcp(netstat2::TcpSocketInfo {
-                    local_addr: "1.2.3.4".parse::<IpAddr>().unwrap(),
-                    local_port: 9090,
-                    remote_addr: "5.6.7.8".parse::<IpAddr>().unwrap(),
-                    remote_port: 1234,
-                    state: netstat2::TcpState::Established,
-                }),
-                associated_pids: vec![200],
-            },
+            tcp_state(
+                "1.2.3.4",
+                9090,
+                vec![200],
+                netstat2::TcpState::Established,
+            ),
         ];
         let sys = sysinfo::System::new();
         let result = build_entries(sockets, &sys);
