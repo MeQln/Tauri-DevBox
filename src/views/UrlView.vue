@@ -41,7 +41,7 @@
           <path d="M9 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-3" />
         </svg>
       </PillBtn>
-      <PillBtn icon-only title="读取文件">
+      <PillBtn icon-only title="读取文件" @click="readInput">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14 3v5h5" />
           <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -78,6 +78,8 @@ import Switch from '@/components/ui/Switch.vue'
 import CodeArea from '@/components/ui/CodeArea.vue'
 import { urlApi } from '@/api/url'
 import { clipboardApi } from '@/api/clipboard'
+import { open as openDialog } from '@tauri-apps/plugin-dialog'
+import { readTextFile } from '@tauri-apps/plugin-fs'
 
 const isEncode  = ref(true)
 const multiline = ref(false)
@@ -100,6 +102,20 @@ watch([input, isEncode, multiline], async ([t, enc, ml]) => {
 
 function clearInput() {
   input.value = ''
+}
+
+async function readInput() {
+  const path = await openDialog({
+    multiple: false,
+    filters: [{ name: '文本', extensions: ['txt', 'md', 'log', 'json', 'csv', 'xml', 'html', 'js', 'ts'] }],
+  })
+  if (typeof path !== 'string') return
+  try {
+    input.value = await readTextFile(path)
+    message.success('已读取')
+  } catch {
+    message.error('读取文件失败')
+  }
 }
 
 async function pasteInput() {
