@@ -9,6 +9,7 @@ const routes: RouteRecordRaw[] = [
       { path: '', redirect: '/tools/qrcode' },
       { path: 'tools/qrcode', component: () => import('@/views/QrCodeView.vue') },
       { path: 'tools/url', component: () => import('@/views/UrlView.vue') },
+      { path: 'tools/port', component: () => import('@/views/PortView.vue') },
       { path: 'tools/:id', component: () => import('@/views/PlaceholderView.vue') },
     ],
   },
