@@ -69,11 +69,14 @@ pub fn kill_port(pid: u32) -> Result<(), String> {
     let sys = sysinfo::System::new_all();
     let sys_pid = sysinfo::Pid::from_u32(pid);
     match sys.process(sys_pid) {
-        // sysinfo::Process::kill() 内部走 Signal::Kill：
-        //   Unix = SIGKILL（强制结束，非 SIGTERM）
-        //   Windows = TerminateProcess（强制）
         Some(proc) => {
-            if proc.kill() {
+            // Unix: kill_with(Signal::Term) 发 SIGTERM（优雅结束）
+            // Windows: kill_with(Term) 返回 None（Windows 无 SIGTERM 语义），
+            //          fallback 到 kill()（TerminateProcess，强制）—— 平台固有限制，不报错
+            let ok = proc
+                .kill_with(sysinfo::Signal::Term)
+                .unwrap_or_else(|| proc.kill());
+            if ok {
                 Ok(())
             } else {
                 Err("结束失败".to_string())
