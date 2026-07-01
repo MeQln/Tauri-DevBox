@@ -9,12 +9,17 @@
       <div class="section-title">
         <span>文本</span>
         <div class="section-actions">
-          <PillBtn title="粘贴" @click="pasteText">
+          <PillBtn icon-only title="复制" @click="copyText">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+            </svg>
+          </PillBtn>
+          <PillBtn icon-only title="粘贴" @click="pasteText">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="3" width="6" height="4" rx="1" />
               <path d="M9 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-3" />
             </svg>
-            <span>粘贴</span>
           </PillBtn>
           <PillBtn icon-only title="读取文件" @click="readTextFromFile">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -22,24 +27,17 @@
               <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8z" />
             </svg>
           </PillBtn>
+          <PillBtn icon-only title="保存为图片" @click="saveImage" :disabled="!svgMarkup">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+              <path d="M7 10l5 5 5-5" />
+              <path d="M12 15V3" />
+            </svg>
+          </PillBtn>
           <PillBtn icon-only title="清空" @click="clearInput">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>
-          </PillBtn>
-          <span class="divider" />
-          <PillBtn icon-only title="保存" @click="saveText">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
-              <path d="M17 21v-8H7v8M7 3v5h8" />
-            </svg>
-          </PillBtn>
-          <PillBtn title="复制" @click="copyText">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" />
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-            </svg>
-            <span>复制</span>
           </PillBtn>
         </div>
       </div>
@@ -55,8 +53,6 @@
         <p class="muted">或者</p>
         <p>
           <a class="link" @click="onBrowseImage">浏览文件</a>
-          <span class="sep">/</span>
-          <a class="link" @click="onPasteImage">粘贴</a>
         </p>
       </div>
 
@@ -78,7 +74,7 @@ import { useMessage } from 'naive-ui'
 import PillBtn from '@/components/ui/PillBtn.vue'
 import { qrApi } from '@/api/qrcode'
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog'
-import { readFile, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
+import { readFile, readTextFile, writeFile } from '@tauri-apps/plugin-fs'
 
 const input = ref('')
 const svgMarkup = ref('')
@@ -152,34 +148,6 @@ async function onBrowseImage() {
   await decodeBytes(Array.from(data))
 }
 
-async function onPasteImage() {
-  let items
-  try {
-    items = await navigator.clipboard.read()
-  } catch (e) {
-    if (e instanceof DOMException && e.name === 'NotAllowedError') {
-      message.error('未授予剪贴板权限')
-    } else {
-      message.error('读取剪贴板失败')
-    }
-    return
-  }
-  for (const item of items) {
-    const imgType = item.types.find(t => t.startsWith('image/'))
-    if (!imgType) continue
-    let buf: ArrayBuffer
-    try {
-      const blob = await item.getType(imgType)
-      buf = await blob.arrayBuffer()
-    } catch {
-      continue
-    }
-    await decodeBytes(Array.from(new Uint8Array(buf)))
-    return
-  }
-  message.warning('剪贴板中没有图片')
-}
-
 async function pasteText() {
   try {
     input.value = await navigator.clipboard.readText()
@@ -201,24 +169,6 @@ async function readTextFromFile() {
   }
 }
 
-function clearInput() {
-  input.value = ''
-}
-
-async function saveText() {
-  const path = await saveDialog({
-    filters: [{ name: '文本', extensions: ['txt'] }],
-    defaultPath: 'qrcode-text.txt',
-  })
-  if (typeof path !== 'string') return
-  try {
-    await writeTextFile(path, input.value)
-    message.success('已保存')
-  } catch {
-    message.error('保存失败')
-  }
-}
-
 async function copyText() {
   try {
     await navigator.clipboard.writeText(input.value)
@@ -227,6 +177,55 @@ async function copyText() {
     message.error('复制失败')
   }
 }
+
+// 把当前 SVG 二维码光栅化为 PNG 字节：Blob URL → Image → canvas（白底）→ toBlob。
+async function saveImage() {
+  if (!svgMarkup.value) return
+  const path = await saveDialog({
+    filters: [{ name: 'PNG 图片', extensions: ['png'] }],
+    defaultPath: 'qrcode.png',
+  })
+  if (typeof path !== 'string') return
+  try {
+    const bytes = await svgToPngBytes(svgMarkup.value)
+    await writeFile(path, bytes)
+    message.success('已保存')
+  } catch (e) {
+    console.error('保存二维码图片失败:', e)
+    message.error('保存失败')
+  }
+}
+
+function svgToPngBytes(svg: string): Promise<Uint8Array> {
+  const size = 1024
+  return new Promise((resolve, reject) => {
+    const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = size
+      canvas.height = size
+      const ctx = canvas.getContext('2d')
+      if (!ctx) { URL.revokeObjectURL(url); reject(new Error('no 2d context')); return }
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, size, size)
+      ctx.drawImage(img, 0, 0, size, size)
+      URL.revokeObjectURL(url)
+      canvas.toBlob(async (b) => {
+        if (!b) { reject(new Error('toBlob failed')); return }
+        resolve(new Uint8Array(await b.arrayBuffer()))
+      }, 'image/png')
+    }
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('svg load failed')) }
+    img.src = url
+  })
+}
+
+function clearInput() {
+  input.value = ''
+}
+
 </script>
 
 <style scoped>
@@ -256,10 +255,6 @@ async function copyText() {
   font-size: 13.5px; font-weight: 500; color: var(--ink-2);
 }
 .section-actions { display: flex; gap: 4px; align-items: center; }
-.divider {
-  width: 1px; height: 18px; background: var(--border);
-  margin: 0 6px;
-}
 
 .text-area {
   flex: 1;
@@ -276,7 +271,7 @@ async function copyText() {
 .text-area:focus { border-color: var(--accent, #5b8cff); }
 
 .dropzone {
-  border: 2px dashed var(--ink-5);
+  border: 2px dashed var(--rule);
   border-radius: var(--r-md);
   padding: 24px 18px;
   text-align: center;
@@ -287,7 +282,6 @@ async function copyText() {
 .dropzone .link {
   color: var(--accent, #5b8cff); cursor: pointer; font-weight: 500;
 }
-.dropzone .sep { margin: 0 12px; color: var(--ink-3); }
 
 .preview {
   flex: 1;

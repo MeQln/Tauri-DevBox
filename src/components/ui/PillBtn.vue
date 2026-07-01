@@ -19,6 +19,7 @@ defineProps<{ iconOnly?: boolean }>()
 }
 .pill-btn:hover { background: #ebe9e3; }
 .pill-btn:active { background: #e2dfd8; }
+.pill-btn:disabled { opacity: .45; cursor: not-allowed; pointer-events: none; }
 .pill-btn :deep(svg) { width: 14px; height: 14px; }
 .pill-btn.icon-only { width: 32px; padding: 0; justify-content: center; }
 </style>

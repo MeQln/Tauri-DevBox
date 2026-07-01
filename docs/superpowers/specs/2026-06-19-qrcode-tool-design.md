@@ -111,19 +111,19 @@ pub fn qr_decode(image: Vec<u8>) -> Result<String, String>; // 失败返回 Err(
 
 | 操作 | 行为 |
 |---|---|
-| 输入文本 + 点「生成二维码」 | 调用 `qrApi.encode(text)`，SVG 字符串 `v-html` 注入右下区；空文本时按钮 disabled |
-| 文本变化 | **不触发实时生成**；若已存在二维码，文本改了**不清掉**（保留上次结果，沿用 URL 工具的静默策略） |
+| 输入文本 | 实时调用 `qrApi.encode(text)`，SVG 字符串 `v-html` 注入右下区；空文本时清空预览（详见下方「2026-06-21 修正」） |
+| 文本变化 | **触发实时生成**；编码失败保留上次预览（沿用 URL 工具的 watcher 静默策略） |
 | 拖入图片 | 右上虚线框 `@dragover.prevent` + `@drop`，取 `dataTransfer.files[0]`，`arrayBuffer()` → bytes → `qrApi.decode`，结果写入左侧 `input.value`；解析失败 toast |
 | 「浏览文件」 | `tauri-plugin-dialog` 的 `open({ filters: [{ name: 'Image', extensions: ['bmp','gif','jpeg','jpg','pbm','png','tga','tiff','webp'] }] })` → 路径 → `@tauri-apps/plugin-fs` 的 `readFile()` → bytes → decode |
 | 右上「粘贴」 | `navigator.clipboard.read()` → 找出 `image/*` item → `blob.arrayBuffer()` → bytes → decode |
 | 左侧「粘贴」「复制」 | 沿用 URL 工具的 `navigator.clipboard` + `useMessage` 模式 |
 | 左侧「读文件」 | dialog `open` filters `.txt` → `readTextFile` → 写入 input |
 | 左侧「保存」 | dialog `save()` + `writeTextFile()` |
-| 解码结果回填左侧 | 直接 `input.value = decodedText`；**不**自动触发生成（生成需手动点按钮，避免连锁效应） |
+| 解码结果回填左侧 | 直接 `input.value = decodedText`；由实时 watcher 自动重新生成（与文本输入一致） |
 
 ### Race 处理
 
-只有 decode 路径异步——拖文件、浏览、粘贴均最终走 `qrApi.decode`。复用 URL 工具的 `reqId` 模式：连续拖入多张图只取最后一张写回。encode 是按钮点击，自带防抖（按钮 disabled 期间不响应）。
+encode 与 decode 两条路径均异步，复用 URL 工具的 `reqId` 模式（`encodeReqId` / `decodeReqId`）：连续输入只取最后一次编码结果；连续拖入多张图只取最后一张写回。
 
 ## 验证点
 
@@ -147,3 +147,15 @@ pub fn qr_decode(image: Vec<u8>) -> Result<String, String>; // 失败返回 Err(
 - ❌ 扫描历史 / 收藏
 - ❌ 暗色模式适配（仓库本就不做暗色）
 - ❌ 摄像头实时扫码（与桌面工具定位无关）
+
+## 修正记录
+
+### 2026-06-21：编码改为实时生成
+
+原 spec 规定「点『生成二维码』按钮才触发编码、空文本时按钮 disabled」。实现阶段改为 **watcher 实时生成**（与左侧文本同步，按 race token 模式去抖），删除了「生成二维码」按钮与操作行。
+
+理由：
+1. 与 URL 工具体感一致，左列只剩 textarea + 顶部工具栏，UI 更干净。
+2. encode 是纯计算、无副作用，实时 + race token 不存在风险。
+
+随之联动的变更：左侧「生成二维码」按钮删除；交互表中相关行已同步修正（见「交互细节」表）。
