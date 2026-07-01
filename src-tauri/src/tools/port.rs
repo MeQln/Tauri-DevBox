@@ -85,3 +85,74 @@ pub fn kill_port(pid: u32) -> Result<(), String> {
         None => Err(format!("进程 {} 不存在", pid)),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::net::IpAddr;
+
+    /// 构造一个 TCP LISTEN socket，便于测试打桩。
+    /// remote_addr/remote_port 对 build_entries 无意义，给占位值即可。
+    fn tcp_listen(addr: &str, port: u16, pids: Vec<u32>) -> netstat2::SocketInfo {
+        netstat2::SocketInfo {
+            protocol_socket_info: netstat2::ProtocolSocketInfo::Tcp(netstat2::TcpSocketInfo {
+                local_addr: addr.parse::<IpAddr>().unwrap(),
+                local_port: port,
+                remote_addr: "0.0.0.0".parse::<IpAddr>().unwrap(),
+                remote_port: 0,
+                state: netstat2::TcpState::Listen,
+            }),
+            associated_pids: pids,
+        }
+    }
+
+    /// 非 LISTEN 状态的 socket 必须被过滤掉。
+    #[test]
+    fn build_entries_filters_non_listen() {
+        let sockets = vec![
+            tcp_listen("0.0.0.0", 8080, vec![100]),
+            netstat2::SocketInfo {
+                protocol_socket_info: netstat2::ProtocolSocketInfo::Tcp(netstat2::TcpSocketInfo {
+                    local_addr: "1.2.3.4".parse::<IpAddr>().unwrap(),
+                    local_port: 9090,
+                    remote_addr: "5.6.7.8".parse::<IpAddr>().unwrap(),
+                    remote_port: 1234,
+                    state: netstat2::TcpState::Established,
+                }),
+                associated_pids: vec![200],
+            },
+        ];
+        let sys = sysinfo::System::new();
+        let result = build_entries(sockets, &sys);
+        assert_eq!(result.len(), 1, "Established 应被过滤，只留 LISTEN");
+        assert_eq!(result[0].port, 8080);
+        assert_eq!(result[0].pid, 100);
+    }
+
+    /// 进程表查不到 pid 时，process_name 回退为 "unknown"。
+    #[test]
+    fn build_entries_unknown_process_name() {
+        let sockets = vec![tcp_listen("0.0.0.0", 443, vec![999_999])];
+        let sys = sysinfo::System::new(); // 空进程表，任何 pid 都查不到
+        let result = build_entries(sockets, &sys);
+        assert_eq!(result.len(), 1);
+        assert_eq!(result[0].pid, 999_999);
+        assert_eq!(result[0].process_name, "unknown");
+    }
+
+    /// 同端口不同地址（不同 PID）两行都保留，不去重。
+    #[test]
+    fn build_entries_keeps_same_port_multi_address() {
+        let sockets = vec![
+            tcp_listen("0.0.0.0", 8080, vec![100]),
+            tcp_listen("127.0.0.1", 8080, vec![200]),
+        ];
+        let sys = sysinfo::System::new();
+        let result = build_entries(sockets, &sys);
+        assert_eq!(result.len(), 2, "同端口不同地址应保留两行");
+        assert_eq!(result[0].port, 8080);
+        assert_eq!(result[1].port, 8080);
+        assert_ne!(result[0].address, result[1].address);
+        assert_ne!(result[0].pid, result[1].pid);
+    }
+}
