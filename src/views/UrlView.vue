@@ -107,7 +107,7 @@ function clearInput() {
 async function readInput() {
   const path = await openDialog({
     multiple: false,
-    filters: [{ name: '文本', extensions: ['txt', 'md', 'log', 'json', 'csv', 'xml', 'html', 'js', 'ts'] }],
+    filters: [{ name: '文本文件', extensions: ['txt'] }],
   })
   if (typeof path !== 'string') return
   try {
