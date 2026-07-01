@@ -35,12 +35,11 @@
   <div class="section-title">
     <span>输入</span>
     <div class="section-actions">
-      <PillBtn title="粘贴">
+      <PillBtn icon-only title="粘贴" @click="pasteInput">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="9" y="3" width="6" height="4" rx="1" />
           <path d="M9 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-3" />
         </svg>
-        <span>粘贴</span>
       </PillBtn>
       <PillBtn icon-only title="读取文件">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -60,27 +59,10 @@
   <div class="section-title">
     <span>输出</span>
     <div class="section-actions">
-      <PillBtn icon-only title="保存">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
-          <path d="M17 21v-8H7v8M7 3v5h8" />
-        </svg>
-      </PillBtn>
-      <PillBtn title="复制" @click="copyOutput">
+      <PillBtn icon-only title="复制" @click="copyOutput">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="9" y="9" width="13" height="13" rx="2" />
           <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-        </svg>
-        <span>复制</span>
-      </PillBtn>
-      <PillBtn icon-only title="展开">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-        </svg>
-      </PillBtn>
-      <PillBtn icon-only title="预览模式">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 21h6M10 17a5 5 0 114 0v3h-4z" />
         </svg>
       </PillBtn>
     </div>
@@ -95,6 +77,7 @@ import PillBtn from '@/components/ui/PillBtn.vue'
 import Switch from '@/components/ui/Switch.vue'
 import CodeArea from '@/components/ui/CodeArea.vue'
 import { urlApi } from '@/api/url'
+import { clipboardApi } from '@/api/clipboard'
 
 const isEncode  = ref(true)
 const multiline = ref(false)
@@ -119,9 +102,23 @@ function clearInput() {
   input.value = ''
 }
 
+async function pasteInput() {
+  try {
+    const text = await clipboardApi.read()
+    if (!text) {
+      message.info('剪贴板为空')
+      return
+    }
+    input.value = text
+    message.success('已粘贴')
+  } catch {
+    message.error('粘贴失败')
+  }
+}
+
 async function copyOutput() {
   try {
-    await navigator.clipboard.writeText(output.value)
+    await clipboardApi.write(output.value)
     message.success('已复制')
   } catch {
     message.error('复制失败')
