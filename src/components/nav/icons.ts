@@ -23,4 +23,9 @@ export const ICONS: Record<string, string> = {
     '<path d="M4 7V4h16v3"/>' +
     '<path d="M9 20h6"/>' +
     '<path d="M12 4v16"/>',
+  server:
+    '<rect x="2" y="3" width="20" height="8" rx="2"/>' +
+    '<rect x="2" y="13" width="20" height="8" rx="2"/>' +
+    '<path d="M6 7h.01"/>' +
+    '<path d="M6 17h.01"/>',
 }

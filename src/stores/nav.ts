@@ -30,6 +30,9 @@ export const NAV_DATA: NavNode[] = [
     { type: 'item', id: 'regex',    glyph: '.*',  label: '正则表达式', hasUpdate: true },
     { type: 'item', id: 'xml-test', glyph: 'XM',  label: 'XML' },
   ]},
+  { type: 'group', id: 'g-system', icon: 'server', label: '系统工具', expanded: true, children: [
+    { type: 'item', id: 'port', glyph: '⚓', label: '端口管理' },
+  ]},
   { type: 'group', id: 'g-format', icon: 'align', label: '格式化工具', expanded: true, children: [
     { type: 'item', id: 'json',    glyph: '{;}', label: 'JSON' },
     { type: 'item', id: 'sql',     glyph: 'SQ',  label: 'SQL' },
