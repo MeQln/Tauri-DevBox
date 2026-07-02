@@ -28,4 +28,9 @@ export const ICONS: Record<string, string> = {
     '<rect x="2" y="13" width="20" height="8" rx="2"/>' +
     '<path d="M6 7h.01"/>' +
     '<path d="M6 17h.01"/>',
+  swap:
+    '<path d="M8 3 4 7l4 4"/>' +
+    '<path d="M4 7h16"/>' +
+    '<path d="m16 21 4-4-4-4"/>' +
+    '<path d="M20 17H4"/>',
 }

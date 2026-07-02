@@ -28,6 +28,10 @@ export const NAV_DATA: NavNode[] = [
   { type: 'group', id: 'g-system', icon: 'server', label: '系统工具', expanded: true, children: [
     { type: 'item', id: 'port', glyph: '⚓', label: '端口管理' },
   ]},
+  { type: 'group', id: 'g-codec', icon: 'swap', label: '编解码器', expanded: true, children: [
+    { type: 'item', id: 'base64-image', glyph: 'B图', label: 'Base64图片' },
+    { type: 'item', id: 'base64-text',  glyph: 'B文', label: 'Base64文本' },
+  ]},
   { type: 'group', id: 'g-test',  icon: 'flask', label: '测试工具', expanded: true, children: [
     { type: 'item', id: 'jsonpath', glyph: '{;}', label: 'JSONPath' },
     { type: 'item', id: 'regex',    glyph: '.*',  label: '正则表达式', hasUpdate: true },

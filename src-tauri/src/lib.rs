@@ -9,6 +9,8 @@ pub fn run() {
     .invoke_handler(tauri::generate_handler![
       tools::url::url_encode,
       tools::url::url_decode,
+      tools::base64::base64_encode,
+      tools::base64::base64_decode,
       tools::qrcode::qr_encode,
       tools::qrcode::qr_decode,
       tools::port::list_ports,
