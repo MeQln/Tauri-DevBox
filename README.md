@@ -10,9 +10,11 @@
 |------|------|----------|------|
 | 二维码 | `/tools/qrcode` | `tools/qrcode.rs` (`qr_encode` / `qr_decode`) | 实时生成与图片解析，支持拖拽、读文件、剪贴板 |
 | URL 编 / 解码 | `/tools/url` | `tools/url.rs` (`url_encode` / `url_decode`) | 字符集与 JS `encodeURIComponent` 对齐；解码失败返回原文 |
+| Base64 文本 | `/tools/base64-text` | `tools/base64.rs` (`base64_encode` / `base64_decode`) | 标准 / URL-safe 两种字母表；解码自动剥离空白，失败返回原文 |
+| Base64 图片 | `/tools/base64-image` | `tools/base64.rs` | 图片 ↔ Base64 互转预览 |
 | 端口管理 | `/tools/port` | — | 规划中（Coming Soon 占位） |
 
-其余导航项（JSONPath、正则、JSON/SQL/XML 格式化、转义、列表比对、Markdown 预览等）统一落到 `PlaceholderView` 占位页。
+其余导航项（JSONPath、正则、XML 测试、JSON/SQL/XML 格式化、转义 / 反转义、列表比对、Markdown 预览等）统一落到 `PlaceholderView` 占位页。导航按分组组织：系统工具、编解码器、测试工具、格式化工具、生成器、图像处理、文本处理。
 
 ## 快速开始
 
@@ -67,7 +69,7 @@ views (UrlView / QrCodeView / PlaceholderView)
 
 ### 路由
 
-vue-router 嵌套在 `AppShell` 之下：`/tools/:id` 命中 `PlaceholderView`，通过 `useNavStore.findLabel(id)` 反查工具名显示标题；具体工具页（`qrcode`、`url`）注册独立路由。
+vue-router 嵌套在 `AppShell` 之下：`/tools/:id` 命中 `PlaceholderView`，通过 `useNavStore.findLabel(id)` 反查工具名显示标题；具体工具页（`qrcode`、`url`、`base64-text`、`base64-image`）注册独立路由。
 
 ### 样式三层
 
@@ -116,7 +118,7 @@ fs-tauri/
 │   ├── src/
 │   │   ├── lib.rs            #   crate root + Builder 链
 │   │   ├── main.rs           #   入口
-│   │   └── tools/            #   #[tauri::command] 实现（url / qrcode）
+│   │   └── tools/            #   #[tauri::command] 实现（url / qrcode / base64）
 │   ├── capabilities/         #   权限配置
 │   └── tauri.conf.json
 └── docs/superpowers/         #   设计 spec 与实现计划
