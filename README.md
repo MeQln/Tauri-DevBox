@@ -18,8 +18,11 @@
 | JSON 格式化 | `/tools/json` | — 前端 `JSON` 原生 | 格式化 / 压缩，2 / 4 空格缩进，解析错误内联提示 |
 | SQL 格式化 | `/tools/sql` | — 前端 `sql-formatter` | 格式化（关键字大写）/ 压缩，2 / 4 空格缩进 |
 | XML 格式化 | `/tools/xml-fmt` | — 前端 `DOMParser` | 格式化 / 压缩，支持属性 / 注释 / CDATA / 处理指令 |
+| 哈希 / 校验 | `/tools/hash` | `tools/hash.rs` (`hash_text` / `hash_bytes` / `hash_file`) | 文本 / 文件计算 MD5 / SHA1 / SHA256 / SHA384 / SHA512，文件 64KB 分块流式 |
+| 密码生成 | `/tools/password` | `tools/password.rs` (`generate_password`) | OsRng 密码学安全随机，可选字符类别并保证覆盖，可排除易混淆字符 |
+| UUID 生成 | `/tools/uuid` | `tools/uuid.rs` (`generate_uuids`) | v4（随机）/ v7（时间排序）批量生成，大写与连字符可选 |
 
-其余导航项（转义 / 反转义、列表比对、Markdown 预览，以及生成器、图像处理等暂留空分组）统一落到 `PlaceholderView` 占位页。导航按分组组织：系统工具、编解码器、格式化工具、测试工具、生成器、图像处理、文本处理。
+其余导航项（转义 / 反转义、列表比对、Markdown 预览，以及图像处理等暂留空分组）统一落到 `PlaceholderView` 占位页。导航按分组组织：系统工具、编解码器、格式化工具、测试工具、生成器、图像处理、文本处理。
 
 ## 快速开始
 
@@ -74,7 +77,7 @@ views (UrlView / QrCodeView / PortView / JsonView / SqlView / XmlView / Connecti
 
 ### 路由
 
-vue-router 嵌套在 `AppShell` 之下：`/tools/:id` 命中 `PlaceholderView`，通过 `useNavStore.findLabel(id)` 反查工具名显示标题；已实现工具页（`port`、`qrcode`、`url`、`base64-text`、`base64-image`、`json`、`sql`、`xml-fmt`、`connectivity`、`websocket`）注册独立路由。根路径 `/` 默认重定向到 `/tools/port`。
+vue-router 嵌套在 `AppShell` 之下：`/tools/:id` 命中 `PlaceholderView`，通过 `useNavStore.findLabel(id)` 反查工具名显示标题；已实现工具页（`port`、`qrcode`、`url`、`base64-text`、`base64-image`、`json`、`sql`、`xml-fmt`、`connectivity`、`websocket`、`hash`、`password`、`uuid`）注册独立路由。根路径 `/` 默认重定向到 `/tools/port`。
 
 ### 样式三层
 

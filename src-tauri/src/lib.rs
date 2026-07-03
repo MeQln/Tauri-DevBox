@@ -17,6 +17,11 @@ pub fn run() {
       tools::port::kill_port,
       tools::net::ping_host,
       tools::net::check_port,
+      tools::hash::hash_text,
+      tools::hash::hash_bytes,
+      tools::hash::hash_file,
+      tools::password::generate_passwords,
+      tools::uuid::generate_uuids,
     ])
     .setup(|app| {
       if cfg!(debug_assertions) {

@@ -41,7 +41,11 @@ export const NAV_DATA: NavNode[] = [
     { type: 'item', id: 'connectivity', icon: 'signal', label: '连通性测试' },
     { type: 'item', id: 'websocket',    icon: 'radio',  label: 'WebSocket' },
   ]},
-  { type: 'group', id: 'g-gen',   icon: 'zap',   label: '生成器',   expanded: false, children: [] },
+  { type: 'group', id: 'g-gen',   icon: 'zap',   label: '生成器',   expanded: true, children: [
+    { type: 'item', id: 'hash', icon: 'hash', label: '哈希 / 校验' },
+    { type: 'item', id: 'password', icon: 'key', label: '密码' },
+    { type: 'item', id: 'uuid', icon: 'fingerprint', label: 'UUID' },
+  ]},
   { type: 'group', id: 'g-img',   icon: 'image', label: '图像处理', expanded: false, children: [] },
   { type: 'group', id: 'g-text',  icon: 'type',  label: '文本处理', expanded: true, children: [
     { type: 'item', id: 'escape',   glyph: 'TX', label: '转义 / 反转义' },
