@@ -26,6 +26,11 @@ const nav = useNavStore()
 </script>
 
 <style scoped>
-nav::-webkit-scrollbar { width: 8px; }
-nav::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 4px; }
+nav::-webkit-scrollbar { width: 6px; }
+nav::-webkit-scrollbar-track { background: transparent; }
+nav::-webkit-scrollbar-thumb {
+  background: var(--ink-5);
+  border-radius: 3px;
+}
+nav::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
 </style>
