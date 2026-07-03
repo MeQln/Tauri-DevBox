@@ -2,7 +2,7 @@
 
 本地开发者工具集桌面应用（DevToys 风格），左侧导航 + 右侧工具页。基于 **Tauri 2 + Vue 3 + Pinia + vue-router + Tailwind CSS** 构建。系统与网络类工具的真实逻辑下沉到 Rust（经 Tauri IPC 调用）；文本 / 格式化类工具使用前端原生能力或成熟库，避免不必要的跨端。
 
-> 仓库目录名仍为 `fs-tauri`，但面向用户的产品名已统一为 **DevBox**（窗口标题 `DevBox · 开发工具箱`，Cargo `[[bin]] name = "DevBox"`）。
+> 产品名已全面统一为 **DevBox**：仓库目录名、远端地址（`gitee.com/MeQln/DevBox.git`）、`package.json#name`、`tauri.conf.json`（`productName` / `identifier`）、窗口标题 `DevBox · 开发工具箱`、Cargo `[[bin]] name = "DevBox"` 全部一致，无 fs-tauri 残留。
 
 ## 预览
 
