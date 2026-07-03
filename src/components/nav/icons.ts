@@ -61,4 +61,7 @@ export const ICONS: Record<string, string> = {
     '<path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/>' +
     '<path d="M8.65 22c.21-.66.45-1.32.57-2"/>' +
     '<path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>',
+  search:
+    '<circle cx="11" cy="11" r="8"/>' +
+    '<path d="m21 21-4.3-4.3"/>',
 }

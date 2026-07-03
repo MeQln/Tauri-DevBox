@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export type NavItem = {
   type: 'item'
@@ -63,6 +63,29 @@ export const useNavStore = defineStore('nav', () => {
   const items = NAV_DATA
   const foot = FOOT_DATA
   const activeId = ref<string>('port')
+  const query = ref('')
+
+  function matchItem(item: NavItem, q: string) {
+    return item.label.toLowerCase().includes(q) || item.id.toLowerCase().includes(q)
+  }
+
+  // 空 query 直接返回原数据；非空时按 item 的 label/id 过滤，
+  // group 标题命中则整组保留，否则仅保留匹配的子项，并强制展开。
+  const filteredItems = computed<NavNode[]>(() => {
+    const q = query.value.trim().toLowerCase()
+    if (!q) return items
+    const out: NavNode[] = []
+    for (const node of items) {
+      if (node.type === 'item') {
+        if (matchItem(node, q)) out.push(node)
+        continue
+      }
+      const groupMatch = node.label.toLowerCase().includes(q)
+      const children = groupMatch ? node.children : node.children.filter(c => matchItem(c, q))
+      if (children.length) out.push({ ...node, children, expanded: true })
+    }
+    return out
+  })
 
   function select(id: string) {
     activeId.value = id
@@ -82,5 +105,5 @@ export const useNavStore = defineStore('nav', () => {
     return null
   }
 
-  return { items, foot, activeId, select, findLabel }
+  return { items, foot, activeId, query, filteredItems, select, findLabel }
 })

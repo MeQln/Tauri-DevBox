@@ -2,7 +2,7 @@
   <div :class="['group', { collapsed: !expanded }]">
     <div
       class="grid grid-cols-[22px_1fr_16px] items-center h-9 px-1.5 rounded-lg text-ink-3 text-[13.5px] cursor-pointer hover:bg-aside-2 transition-colors"
-      @click="expanded = !expanded"
+      @click="toggle"
     >
       <span class="inline-flex items-center justify-center">
         <svg
@@ -31,10 +31,18 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import NavItem from './NavItem.vue'
-import type { NavGroup } from '@/stores/nav'
+import { useNavStore, type NavGroup } from '@/stores/nav'
 import { ICONS } from './icons'
 
 const props = defineProps<{ group: NavGroup }>()
-const expanded = ref(props.group.expanded)
+const nav = useNavStore()
+const localExpanded = ref(props.group.expanded)
+// 搜索时强制展开，避免折叠态挡住匹配到的子项
+const expanded = computed(() => (nav.query ? true : localExpanded.value))
 const iconSvg = computed(() => (props.group.icon ? ICONS[props.group.icon] : ''))
+
+function toggle() {
+  if (nav.query) return
+  localExpanded.value = !localExpanded.value
+}
 </script>
