@@ -19,7 +19,7 @@
 | SQL 格式化 | `/tools/sql` | — 前端 `sql-formatter` | 格式化（关键字大写）/ 压缩，2 / 4 空格缩进 |
 | XML 格式化 | `/tools/xml-fmt` | — 前端 `DOMParser` | 格式化 / 压缩，支持属性 / 注释 / CDATA / 处理指令 |
 | 哈希 / 校验 | `/tools/hash` | `tools/hash.rs` (`hash_text` / `hash_bytes` / `hash_file`) | 文本 / 文件计算 MD5 / SHA1 / SHA256 / SHA384 / SHA512，文件 64KB 分块流式 |
-| 密码生成 | `/tools/password` | `tools/password.rs` (`generate_password`) | OsRng 密码学安全随机，可选字符类别并保证覆盖，可排除易混淆字符 |
+| 密码生成 | `/tools/password` | `tools/password.rs` (`generate_passwords`) | OsRng 密码学安全随机，可选字符类别并保证覆盖，可排除易混淆字符 |
 | UUID 生成 | `/tools/uuid` | `tools/uuid.rs` (`generate_uuids`) | v4（随机）/ v7（时间排序）批量生成，大写与连字符可选 |
 
 其余导航项（转义 / 反转义、列表比对、Markdown 预览，以及图像处理等暂留空分组）统一落到 `PlaceholderView` 占位页。导航按分组组织：系统工具、编解码器、格式化工具、测试工具、生成器、图像处理、文本处理。
@@ -65,7 +65,7 @@ cd src-tauri && cargo test --lib
 ### 单向依赖
 
 ```
-views (UrlView / QrCodeView / PortView / JsonView / SqlView / XmlView / ConnectivityView / WebSocketView / PlaceholderView)
+views (UrlView / QrCodeView / PortView / Base64ImageView / Base64TextView / JsonView / SqlView / XmlView / ConnectivityView / WebSocketView / HashView / PasswordView / UuidView / PlaceholderView)
   ├─▶ components/nav (AsideNav / NavGroup / NavItem)
   ├─▶ components/ui  (Switch / PillBtn / CodeArea)
   ├─▶ stores/nav     (useNavStore — 单一全局 store，NAV_DATA 为导航真源)
@@ -128,7 +128,7 @@ fs-tauri/
 │   ├── src/
 │   │   ├── lib.rs            #   crate root + Builder 链
 │   │   ├── main.rs           #   入口
-│   │   └── tools/            #   #[tauri::command] 实现（url / qrcode / base64 / port / net）
+│   │   └── tools/            #   #[tauri::command] 实现（url / qrcode / base64 / port / net / hash / password / uuid）
 │   ├── capabilities/         #   权限配置
 │   └── tauri.conf.json
 └── docs/superpowers/         #   设计 spec 与实现计划
