@@ -32,11 +32,6 @@ export const NAV_DATA: NavNode[] = [
     { type: 'item', id: 'base64-image', glyph: 'B图', label: 'Base64图片' },
     { type: 'item', id: 'base64-text',  glyph: 'B文', label: 'Base64文本' },
   ]},
-  { type: 'group', id: 'g-test',  icon: 'flask', label: '测试工具', expanded: true, children: [
-    { type: 'item', id: 'jsonpath', glyph: '{;}', label: 'JSONPath' },
-    { type: 'item', id: 'regex',    glyph: '.*',  label: '正则表达式', hasUpdate: true },
-    { type: 'item', id: 'xml-test', glyph: 'XM',  label: 'XML' },
-  ]},
   { type: 'group', id: 'g-format', icon: 'align', label: '格式化工具', expanded: true, children: [
     { type: 'item', id: 'json',    glyph: '{;}', label: 'JSON' },
     { type: 'item', id: 'sql',     glyph: 'SQ',  label: 'SQL' },
