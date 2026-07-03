@@ -4,6 +4,10 @@
 
 > 仓库目录名仍为 `fs-tauri`，但面向用户的产品名已统一为 **DevBox**（窗口标题 `DevBox · 开发工具箱`，Cargo `[[bin]] name = "DevBox"`）。
 
+## 预览
+
+![DevBox 端口管理页](screenshot.png)
+
 ## 已实现工具
 
 | 工具 | 路由 | 后端实现 | 说明 |
