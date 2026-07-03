@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **DevBox** 是一个本地开发者工具集（DevToys 风格）的 Tauri 2 桌面应用：左侧导航 + 右侧工具页。当前已实现 URL 编 / 解码工具一页，其余导航项落到统一的 Coming Soon 占位页。
 
-历史背景：仓库目录名仍是 `fs-tauri`、`package.json#name` 仍是 `fs-tauri`、远端仓库地址也是 `gitee.com/MeQln/fs-tauri.git`，但**面向用户的产品名已统一为 DevBox**：`tauri.conf.json#productName`、桌面窗口标题 `DevBox · 开发工具箱`、Cargo `[[bin]] name = "DevBox"`。改文案时不要把 DevBox 又改回 fs-tauri。
+历史背景：仓库目录名仍是 `DevBox`、远端仓库地址也是 `gitee.com/MeQln/DevBox.git`，但**面向用户的产品名已统一为 DevBox**：`tauri.conf.json#productName`、桌面窗口标题 `DevBox · 开发工具箱`、Cargo `[[bin]] name = "DevBox"`。改文案时不要把 DevBox 又改回 fs-tauri。
 
 ## 常用命令
 
