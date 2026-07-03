@@ -31,7 +31,18 @@
 
     <!-- 右列：文件输入 + 哈希结果 -->
     <div class="right-col">
-      <div class="dropzone" @dragover.prevent @drop="onDrop">
+      <div
+        class="dropzone"
+        :class="{ active: isDragOver }"
+        @dragover.prevent="isDragOver = true"
+        @dragleave.prevent="isDragOver = false"
+        @drop="onDrop"
+      >
+        <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+          <path d="M7 10l5-5 5 5" />
+          <path d="M12 5v12" />
+        </svg>
         <p>拖放文件到此处，或 <a class="link" @click="onBrowse">浏览文件</a></p>
         <p class="muted">任意类型均可；大文件建议使用浏览（流式计算）</p>
       </div>
@@ -71,6 +82,7 @@ import { readTextFile } from '@tauri-apps/plugin-fs'
 const input = ref('')
 const result = ref<HashResult | null>(null)
 const source = ref<{ label: string; size: number } | null>(null)
+const isDragOver = ref(false)
 const message = useMessage()
 
 const rows = computed(() => {
@@ -143,6 +155,7 @@ async function hashFileBytes(file: File) {
 
 async function onDrop(e: DragEvent) {
   e.preventDefault()
+  isDragOver.value = false
   const file = e.dataTransfer?.files?.[0]
   if (!file) return
   await hashFileBytes(file)
@@ -240,13 +253,22 @@ function formatSize(n: number): string {
 .text-area:focus { border-color: var(--link); }
 
 .dropzone {
+  min-height: 165px;
   border: 2px dashed var(--rule);
   border-radius: var(--r-md);
-  padding: 18px;
+  padding: 28px 20px;
   text-align: center;
   font-size: 13.5px; color: var(--ink-2);
-  display: flex; flex-direction: column; gap: 6px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  transition: border-color .15s, background .15s, color .15s;
 }
+.dropzone.active {
+  border-color: var(--link);
+  background: color-mix(in srgb, var(--link) 7%, transparent);
+  color: var(--link);
+}
+.drop-icon { width: 34px; height: 34px; color: var(--ink-3); margin-bottom: 2px; transition: color .15s; }
+.dropzone.active .drop-icon { color: var(--link); }
 .dropzone .muted { color: var(--ink-3); font-size: 12px; }
 .dropzone .link { color: var(--link); cursor: pointer; font-weight: 500; }
 
