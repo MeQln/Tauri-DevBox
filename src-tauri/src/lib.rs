@@ -15,6 +15,8 @@ pub fn run() {
       tools::qrcode::qr_decode,
       tools::port::list_ports,
       tools::port::kill_port,
+      tools::net::ping_host,
+      tools::net::check_port,
     ])
     .setup(|app| {
       if cfg!(debug_assertions) {

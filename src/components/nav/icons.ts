@@ -5,6 +5,19 @@ export const ICONS: Record<string, string> = {
   link:
     '<path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/>' +
     '<path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/>',
+  activity:
+    '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  signal:
+    '<path d="M2 20h.01"/>' +
+    '<path d="M7 20v-4"/>' +
+    '<path d="M12 20v-8"/>' +
+    '<path d="M17 20V8"/>' +
+    '<path d="M22 4v16"/>',
+  radio:
+    '<path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/>' +
+    '<path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/>' +
+    '<path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/>' +
+    '<path d="M19.1 4.9C23 8.8 23 15.2 19.1 19.1"/>',
   align:
     '<path d="M3 6h18"/>' +
     '<path d="M3 12h13"/>' +

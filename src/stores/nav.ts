@@ -37,6 +37,10 @@ export const NAV_DATA: NavNode[] = [
     { type: 'item', id: 'sql',     glyph: 'SQ',  label: 'SQL' },
     { type: 'item', id: 'xml-fmt', glyph: 'XM',  label: 'XML' },
   ]},
+  { type: 'group', id: 'g-net',  icon: 'activity', label: '测试工具', expanded: true, children: [
+    { type: 'item', id: 'connectivity', icon: 'signal', label: '连通性测试' },
+    { type: 'item', id: 'websocket',    icon: 'radio',  label: 'WebSocket' },
+  ]},
   { type: 'group', id: 'g-gen',   icon: 'zap',   label: '生成器',   expanded: false, children: [] },
   { type: 'group', id: 'g-img',   icon: 'image', label: '图像处理', expanded: false, children: [] },
   { type: 'group', id: 'g-text',  icon: 'type',  label: '文本处理', expanded: true, children: [
@@ -54,7 +58,7 @@ export const FOOT_DATA: NavItem[] = [
 export const useNavStore = defineStore('nav', () => {
   const items = NAV_DATA
   const foot = FOOT_DATA
-  const activeId = ref<string>('qrcode')
+  const activeId = ref<string>('port')
 
   function select(id: string) {
     activeId.value = id
