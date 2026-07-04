@@ -55,8 +55,7 @@ export const NAV_DATA: NavNode[] = [
 ]
 
 export const FOOT_DATA: NavItem[] = [
-  { type: 'item', id: 'extensions', glyph: '⚙', label: '管理扩展' },
-  { type: 'item', id: 'settings',   glyph: '☰', label: '设置' },
+  { type: 'item', id: 'settings', glyph: '☰', label: '设置' },
 ]
 
 export const useNavStore = defineStore('nav', () => {
