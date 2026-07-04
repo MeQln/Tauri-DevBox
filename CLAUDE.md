@@ -104,4 +104,4 @@ CLI 默认生成 `src-tauri/src/lib.rs` + `src-tauri/src/main.rs` 拆分，**不
 
 ## 不做项（spec 明确禁止）
 
-暗色模式、国际化、自动更新、系统托盘、ESLint / Prettier、前端单测 / E2E、Tailwind 暗色配置。除非用户明确要求引入，否则不要主动加。
+国际化、自动更新、系统托盘、ESLint / Prettier、前端单测 / E2E、Tailwind 暗色配置。除非用户明确要求引入，否则不要主动加。

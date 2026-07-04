@@ -18,12 +18,40 @@
   --link: #2769d0;
   --ok: #4f9a59;
   --warn: #d97a3b;
+  --accent: #5b8cff;
+  --danger: #d33;
   --r-sm: 6px;
   --r-md: 10px;
   --r-lg: 14px;
   --serif: 'Inter Tight', 'PingFang SC', 'Noto Sans SC', -apple-system, sans-serif;
   --sans: 'Inter Tight', 'PingFang SC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+
+/* 深色主题：通过 [data-theme="dark"] 覆盖颜色变量。tailwind 与 scoped CSS
+   均经 var(--xxx) 引用 token，此处覆盖即全局生效。圆角 / 字体栈沿用浅色值。 */
+[data-theme='dark'] {
+  --bg: #161617;
+  --surface: #1c1c1e;
+  --aside: #141415;
+  --aside-2: #262629;
+  --aside-3: #323236;
+  --card: #232325;
+  --card-2: #2a2a2d;
+  --rule: #333336;
+  --rule-soft: #262628;
+  --ink: #ececef;
+  --ink-2: #c0c0c4;
+  --ink-3: #94949a;
+  --ink-4: #6e6e74;
+  --ink-5: #4e4e54;
+  --amber: #e8a534;
+  --amber-d: #d4922a;
+  --link: #6a98f0;
+  --ok: #5cb967;
+  --warn: #e08a4d;
+  --accent: #6a98f0;
+  --danger: #e06c6c;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

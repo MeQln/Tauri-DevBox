@@ -43,14 +43,14 @@ function onClick() {
 
 <style scoped>
 .item-active {
-  background: linear-gradient(180deg, #e1ddd4, #d5d0c5);
+  background: linear-gradient(180deg, var(--aside-2), var(--aside-3));
   color: var(--ink);
   font-weight: 500;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
 }
 .glyph {
   width: 18px; height: 18px;
-  background: rgba(0,0,0,0.05);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
   border-radius: 4px;
   display: inline-flex; align-items: center; justify-content: center;
   font-family: var(--mono); font-size: 9px; text-transform: uppercase;

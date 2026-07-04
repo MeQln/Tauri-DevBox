@@ -139,9 +139,9 @@ onBeforeUnmount(() => {
 }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn:not(:disabled):hover { background: var(--card); }
-.btn-danger { color: #d33; border-color: rgba(211, 51, 51, 0.4); }
+.btn-danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, transparent); }
 .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.dot-on { background: var(--ok); box-shadow: 0 0 0 3px rgba(79, 154, 89, 0.15); }
+.dot-on { background: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 15%, transparent); }
 .dot-off { background: var(--ink-5); }
 .state { font-size: 12.5px; color: var(--ink-3); min-width: 56px; }
 .log-wrap {

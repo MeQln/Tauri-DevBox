@@ -35,7 +35,7 @@ function toggle() {
   position: relative;
   width: 44px; height: 24px;
   border-radius: 999px;
-  background: #d8d4cc;
+  background: var(--aside-3);
   transition: background .15s;
   flex-shrink: 0;
   cursor: pointer;
@@ -44,12 +44,12 @@ function toggle() {
   content: '';
   position: absolute; top: 2px; left: 2px;
   width: 20px; height: 20px;
-  background: #fff;
+  background: var(--surface);
   border-radius: 50%;
   box-shadow: 0 1px 2px rgba(0,0,0,0.18);
   transition: transform .22s cubic-bezier(.2,.7,.2,1);
 }
 .switch input { position: absolute; opacity: 0; pointer-events: none; }
-.switch.on { background: #1e1e21; }
+.switch.on { background: var(--ink); }
 .switch.on::after { transform: translateX(20px); }
 </style>

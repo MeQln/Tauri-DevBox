@@ -2,8 +2,12 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import { router } from './router'
+import { initTheme } from './stores/theme'
 import './styles/tokens.css'
 import './styles/tailwind.css'
+
+// mount 前同步应用主题，避免浅色 → 深色闪烁（FOUC）
+initTheme()
 
 const app = createApp(App)
 app.use(createPinia())
@@ -22,3 +26,6 @@ window.addEventListener('drop', (e) => {
   // dropzone 自身的 @drop handler 会先在目标阶段执行；此处兜底阻止默认打开行为
   e.preventDefault()
 })
+
+// 禁用页面右键菜单：桌面应用无需浏览器默认右键（检查元素 / 复制等）
+document.addEventListener('contextmenu', (e) => e.preventDefault())

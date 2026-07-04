@@ -20,6 +20,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'tools/hash', component: () => import('@/views/HashView.vue') },
       { path: 'tools/password', component: () => import('@/views/PasswordView.vue') },
       { path: 'tools/uuid', component: () => import('@/views/UuidView.vue') },
+      { path: 'tools/settings', component: () => import('@/views/SettingsView.vue') },
       { path: 'tools/:id', component: () => import('@/views/PlaceholderView.vue') },
     ],
   },

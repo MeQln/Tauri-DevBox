@@ -192,7 +192,7 @@ async function copyOutput() {
 .row-desc { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
 
 .error-bar {
-  background: rgba(217, 122, 59, 0.08);
+  background: color-mix(in srgb, var(--warn) 8%, transparent);
   color: var(--warn);
   border-left: 3px solid var(--warn);
   border-radius: var(--r-sm);

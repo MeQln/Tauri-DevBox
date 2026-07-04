@@ -222,7 +222,7 @@ onMounted(load)
   border: 1px solid var(--rule);
   border-radius: var(--r-sm);
   background: transparent;
-  color: #d33;
+  color: var(--danger);
   cursor: pointer;
   font-size: 12px;
 }

@@ -140,8 +140,8 @@ onBeforeUnmount(() => {
 .badge {
   padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500;
 }
-.badge-ok { background: rgba(79, 154, 89, 0.12); color: var(--ok); }
-.badge-err { background: rgba(217, 122, 59, 0.12); color: var(--warn); }
+.badge-ok { background: color-mix(in srgb, var(--ok) 12%, transparent); color: var(--ok); }
+.badge-err { background: color-mix(in srgb, var(--warn) 12%, transparent); color: var(--warn); }
 .meta { font-size: 12.5px; color: var(--ink-3); font-family: var(--mono); }
 .msg { font-size: 12.5px; color: var(--ink-2); }
 .output {
