@@ -95,6 +95,8 @@ CLI 默认生成 `src-tauri/src/lib.rs` + `src-tauri/src/main.rs` 拆分，**不
 
 中文 + `类型: 简短描述` 格式：`feat: …`、`fix: …`、`chore: …`、`refactor: …`、`docs: …`、`test: …`。**不要**生成英文 commit message 或加 `Co-Authored-By` 之类标记 — 仓库历史不带它们。
 
+**不自动推送**：仅提交本地 commit，不执行 `git push`。推送操作需用户明确指示后才进行。
+
 ## 文档与设计
 
 - **当前架构 spec**：`docs/superpowers/specs/2026-06-19-tauri-vue3-skeleton-design.md`（Tauri + Vue3 桌面骨架）
