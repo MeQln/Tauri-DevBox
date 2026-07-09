@@ -101,7 +101,8 @@ fn kill_fallback(pid: u32, _found: bool) -> Result<(), String> {
     }
 
     // taskkill 的 stderr 包含失败原因（如权限不足、进程不存在）
-    let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+    // 用 encoding_rs 解码以支持中文 Windows 的 GBK 编码
+    let stderr = super::encoding::decode_output(&output.stderr).trim().to_string();
     if !stderr.is_empty() {
         return Err(stderr);
     }

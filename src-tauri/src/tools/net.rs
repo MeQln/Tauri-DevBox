@@ -70,8 +70,8 @@ pub fn ping_host(app: AppHandle, host: String) -> Result<bool, String> {
                     if buf.is_empty() {
                         continue;
                     }
-                    // 使用 lossy 转换支持非 UTF-8 编码（如中文 Windows 的 GBK）
-                    let line = String::from_utf8_lossy(&buf).to_string();
+                    // 使用 encoding_rs 解码，支持非 UTF-8 编码（如中文 Windows 的 GBK）
+                    let line = super::encoding::decode_output(&buf);
                     buf.clear();
                     let _ = app.emit(
                         "ping:line",

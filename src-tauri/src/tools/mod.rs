@@ -1,4 +1,5 @@
 pub mod base64;
+pub mod encoding;
 pub mod hash;
 pub mod image;
 pub mod net;
