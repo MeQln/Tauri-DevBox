@@ -61,7 +61,7 @@
     </div>
 
     <!-- 操作栏 -->
-    <div class="bar bar-sticky">
+    <div class="bar">
       <span v-if="busy" class="bar-msg">正在转换…</span>
       <span v-if="errMsg" class="bar-msg bar-err">{{ errMsg }}</span>
       <button class="btn btn-primary" :disabled="busy || !sourcePath" @click="convert">开始转换</button>
@@ -207,10 +207,6 @@ async function convert() {
 }
 .preview-info { font-size: 12.5px; color: var(--ink-3); display: flex; align-items: center; gap: 8px; }
 
-.bar-sticky {
-  position: sticky; bottom: 0; padding-top: 8px;
-  background: var(--card); margin-top: auto;
-}
 .bar { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
 .bar-msg { font-size: 13px; color: var(--ink-3); flex: 1; }
 .bar-err { color: var(--warn); }
