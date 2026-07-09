@@ -84,26 +84,8 @@
       </div>
     </div>
 
-    <div v-if="resultInfo" class="section-title">
-      <span>压缩结果</span>
-      <div class="section-actions">
-        <button class="btn" @click="saveResult">另存为…</button>
-      </div>
-    </div>
-    <div v-if="resultInfo" class="preview-wrap">
-      <div class="preview-box">
-        <img :src="resultSrc" class="preview-img" />
-        <div class="preview-info">
-          {{ resultInfo.width }}×{{ resultInfo.height }} · {{ fmtSize(resultInfo.size_bytes) }} · {{ resultInfo.format.toUpperCase() }}
-          <span v-if="sourceInfo" class="size-diff" :class="resultInfo.size_bytes > sourceInfo.size_bytes ? 'diff-up' : 'diff-down'">
-            压缩率：{{ compressRatio }}%
-          </span>
-        </div>
-      </div>
-    </div>
-
     <!-- 操作栏 -->
-    <div class="bar bar-sticky">
+    <div class="bar">
       <span v-if="busy" class="bar-msg">正在压缩…</span>
       <span v-if="errMsg" class="bar-msg bar-err">{{ errMsg }}</span>
       <button class="btn btn-primary" :disabled="busy || !sourcePath" @click="compress">开始压缩</button>
@@ -125,18 +107,11 @@ const quality = ref(70)
 
 const sourcePath = ref('')
 const sourceInfo = ref<ImageInfo | null>(null)
-const resultInfo = ref<ImageInfo | null>(null)
 const busy = ref(false)
 const errMsg = ref('')
 
 const sourceName = computed(() => sourcePath.value ? sourcePath.value.split('/').pop() ?? sourcePath.value : '')
 const previewSrc = computed(() => sourceInfo.value ? `data:image/${sourceInfo.value.format};base64,${sourceInfo.value.data_base64}` : '')
-const resultSrc = computed(() => resultInfo.value ? `data:image/${resultInfo.value.format};base64,${resultInfo.value.data_base64}` : '')
-
-const compressRatio = computed(() => {
-  if (!sourceInfo.value || !resultInfo.value) return 0
-  return Math.round((1 - resultInfo.value.size_bytes / sourceInfo.value.size_bytes) * 100)
-})
 
 function fmtSize(bytes: number): string {
   if (bytes < 1024) return `${bytes}B`
@@ -152,7 +127,6 @@ async function selectSource() {
   })
   if (typeof path !== 'string') return
   sourcePath.value = path
-  resultInfo.value = null
   try {
     sourceInfo.value = await imageApi.read(path)
   } catch (e) {
@@ -165,7 +139,6 @@ async function compress() {
   if (!sourcePath.value) return
   busy.value = true
   errMsg.value = ''
-  resultInfo.value = null
 
   const ext = outFmt.value === 'jpeg' ? 'jpg' : outFmt.value
   const base = sourceName.value.replace(/\.[^.]+$/, '')
@@ -180,8 +153,7 @@ async function compress() {
   }
 
   try {
-    const r = await imageApi.compress(sourcePath.value, quality.value, outPath)
-    resultInfo.value = r
+    await imageApi.compress(sourcePath.value, quality.value, outPath)
     message.success('压缩成功')
   } catch (e) {
     errMsg.value = String(e)
@@ -189,10 +161,6 @@ async function compress() {
   } finally {
     busy.value = false
   }
-}
-
-function saveResult() {
-  message.info('文件已保存到指定位置')
 }
 </script>
 
@@ -284,10 +252,6 @@ function saveResult() {
 .diff-down { color: var(--ok); }
 .diff-up { color: var(--warn); }
 
-.bar-sticky {
-  position: sticky; bottom: 0; padding-top: 8px;
-  background: var(--card); margin-top: auto;
-}
 .bar { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
 .bar-msg { font-size: 13px; color: var(--ink-3); flex: 1; }
 .bar-err { color: var(--warn); }
