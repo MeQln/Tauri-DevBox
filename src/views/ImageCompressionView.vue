@@ -1,5 +1,8 @@
 <template>
   <div class="img-view">
+    <!-- 进度条 -->
+    <div v-if="busy" class="progress-bar" />
+
     <header class="page-head"><h1>图片压缩</h1></header>
 
     <div class="section-title"><span>配置</span></div>
@@ -101,7 +104,7 @@
 
     <!-- 操作栏 -->
     <div class="bar bar-sticky">
-      <span v-if="busy" class="bar-msg">处理中…</span>
+      <span v-if="busy" class="bar-msg">正在压缩…</span>
       <span v-if="errMsg" class="bar-msg bar-err">{{ errMsg }}</span>
       <button class="btn btn-primary" :disabled="busy || !sourcePath" @click="compress">开始压缩</button>
     </div>
@@ -199,6 +202,18 @@ function saveResult() {
   font-family: var(--serif); font-size: 28px; font-weight: 500; letter-spacing: -0.015em;
 }
 
+.progress-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 10;
+  background: linear-gradient(90deg, var(--accent) 30%, transparent 30%);
+  background-size: 200% 100%;
+  animation: progress 1.2s ease infinite;
+  border-radius: 0 0 2px 2px;
+}
+@keyframes progress {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .section-title {
   display: flex; align-items: center; justify-content: space-between;
   font-size: 13.5px; font-weight: 500; color: var(--ink-2); margin: 6px 0 4px;
@@ -233,7 +248,7 @@ function saveResult() {
 .fmt-group { display: flex; gap: 4px; }
 .fmt-group .btn { min-width: 52px; padding: 5px 8px; }
 .fmt-group .btn-active {
-  background: var(--ink); color: var(--card-2); border-color: var(--ink);
+  background: var(--accent); color: #fff; border-color: var(--accent);
 }
 
 .quality { display: flex; align-items: center; gap: 10px; }
@@ -243,7 +258,7 @@ function saveResult() {
 }
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
-  background: var(--ink); cursor: pointer; border: none;
+  background: var(--accent); cursor: pointer; border: none;
 }
 .quality-val {
   min-width: 28px; text-align: center; font-size: 14px; font-weight: 600;
@@ -284,7 +299,7 @@ function saveResult() {
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn:not(:disabled):hover { background: color-mix(in srgb, var(--aside-2) 10%, transparent); }
 .btn-primary {
-  background: var(--ink); color: var(--card-2); border-color: var(--ink);
+  background: var(--accent); color: #fff; border-color: var(--accent);
 }
 .btn-primary:not(:disabled):hover { opacity: 0.85; }
 </style>

@@ -1,5 +1,8 @@
 <template>
   <div class="img-view">
+    <!-- 进度条 -->
+    <div v-if="busy" class="progress-bar" />
+
     <header class="page-head"><h1>格式转换</h1></header>
 
     <div class="section-title"><span>配置</span></div>
@@ -52,33 +55,14 @@
       <div class="preview-box">
         <img :src="previewSrc" class="preview-img" />
         <div class="preview-info">
-          原始：{{ sourceInfo.width }}×{{ sourceInfo.height }} · {{ fmtSize(sourceInfo.size_bytes) }} · {{ sourceInfo.format.toUpperCase() }}
-        </div>
-      </div>
-    </div>
-
-    <!-- 结果 -->
-    <div v-if="resultInfo" class="section-title">
-      <span>转换结果</span>
-      <div class="section-actions">
-        <button class="btn" @click="saveResult">另存为…</button>
-      </div>
-    </div>
-    <div v-if="resultInfo" class="preview-wrap">
-      <div class="preview-box">
-        <img :src="resultSrc" class="preview-img" />
-        <div class="preview-info">
-          转换后：{{ resultInfo.width }}×{{ resultInfo.height }} · {{ fmtSize(resultInfo.size_bytes) }} · {{ resultInfo.format.toUpperCase() }}
-          <span v-if="sourceInfo && resultInfo" class="size-diff" :class="resultInfo.size_bytes > sourceInfo.size_bytes ? 'diff-up' : 'diff-down'">
-            {{ resultInfo.size_bytes > sourceInfo.size_bytes ? '+' : '-' }}{{ fmtSize(diffSize) }}
-          </span>
+          {{ sourceInfo.width }}×{{ sourceInfo.height }} · {{ fmtSize(sourceInfo.size_bytes) }} · {{ sourceInfo.format.toUpperCase() }}
         </div>
       </div>
     </div>
 
     <!-- 操作栏 -->
     <div class="bar bar-sticky">
-      <span v-if="busy" class="bar-msg">处理中…</span>
+      <span v-if="busy" class="bar-msg">正在转换…</span>
       <span v-if="errMsg" class="bar-msg bar-err">{{ errMsg }}</span>
       <button class="btn btn-primary" :disabled="busy || !sourcePath" @click="convert">开始转换</button>
     </div>
@@ -98,17 +82,11 @@ const targetFmt = ref('png')
 
 const sourcePath = ref('')
 const sourceInfo = ref<ImageInfo | null>(null)
-const resultInfo = ref<ImageInfo | null>(null)
 const busy = ref(false)
 const errMsg = ref('')
 
 const sourceName = computed(() => sourcePath.value ? sourcePath.value.split('/').pop() ?? sourcePath.value : '')
 const previewSrc = computed(() => sourceInfo.value ? `data:image/${sourceInfo.value.format};base64,${sourceInfo.value.data_base64}` : '')
-const resultSrc = computed(() => resultInfo.value ? `data:image/${resultInfo.value.format};base64,${resultInfo.value.data_base64}` : '')
-const diffSize = computed(() => {
-  if (!sourceInfo.value || !resultInfo.value) return 0
-  return Math.abs(resultInfo.value.size_bytes - sourceInfo.value.size_bytes)
-})
 
 function fmtSize(bytes: number): string {
   if (bytes < 1024) return `${bytes}B`
@@ -124,7 +102,6 @@ async function selectSource() {
   })
   if (typeof path !== 'string') return
   sourcePath.value = path
-  resultInfo.value = null
   try {
     sourceInfo.value = await imageApi.read(path)
   } catch (e) {
@@ -137,9 +114,7 @@ async function convert() {
   if (!sourcePath.value) return
   busy.value = true
   errMsg.value = ''
-  resultInfo.value = null
 
-  // 自动生成输出文件名
   const base = sourceName.value.replace(/\.[^.]+$/, '')
   const ext = targetFmt.value === 'jpeg' ? 'jpg' : targetFmt.value
   const defaultName = `${base}.${ext}`
@@ -153,8 +128,7 @@ async function convert() {
   }
 
   try {
-    const r = await imageApi.convert(sourcePath.value, targetFmt.value, outPath)
-    resultInfo.value = r
+    await imageApi.convert(sourcePath.value, targetFmt.value, outPath)
     message.success('转换成功')
   } catch (e) {
     errMsg.value = String(e)
@@ -163,17 +137,24 @@ async function convert() {
     busy.value = false
   }
 }
-
-async function saveResult() {
-  // resultInfo 已有输出路径（通过 saveDialog 已保存），无需另存
-  message.info('文件已保存到指定位置')
-}
 </script>
 
 <style scoped>
 .img-view { display: flex; flex-direction: column; gap: 10px; height: 100%; position: relative; }
 .page-head h1 {
   font-family: var(--serif); font-size: 28px; font-weight: 500; letter-spacing: -0.015em;
+}
+
+.progress-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 10;
+  background: linear-gradient(90deg, var(--accent) 30%, transparent 30%);
+  background-size: 200% 100%;
+  animation: progress 1.2s ease infinite;
+  border-radius: 0 0 2px 2px;
+}
+@keyframes progress {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .section-title {
@@ -210,7 +191,7 @@ async function saveResult() {
 .fmt-group { display: flex; gap: 4px; }
 .fmt-group .btn { min-width: 52px; padding: 5px 8px; }
 .fmt-group .btn-active {
-  background: var(--ink); color: var(--card-2); border-color: var(--ink);
+  background: var(--accent); color: #fff; border-color: var(--accent);
 }
 
 .preview-wrap { flex: 1; min-height: 0; }
@@ -225,9 +206,6 @@ async function saveResult() {
   border-radius: var(--r-sm); image-rendering: auto;
 }
 .preview-info { font-size: 12.5px; color: var(--ink-3); display: flex; align-items: center; gap: 8px; }
-.size-diff { font-family: var(--mono); font-size: 12px; }
-.diff-down { color: var(--ok); }
-.diff-up { color: var(--warn); }
 
 .bar-sticky {
   position: sticky; bottom: 0; padding-top: 8px;
@@ -244,7 +222,7 @@ async function saveResult() {
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn:not(:disabled):hover { background: color-mix(in srgb, var(--aside-2) 10%, transparent); }
 .btn-primary {
-  background: var(--ink); color: var(--card-2); border-color: var(--ink);
+  background: var(--accent); color: #fff; border-color: var(--accent);
 }
 .btn-primary:not(:disabled):hover { opacity: 0.85; }
 </style>
