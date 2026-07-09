@@ -46,7 +46,10 @@ export const NAV_DATA: NavNode[] = [
     { type: 'item', id: 'password', icon: 'key', label: '密码' },
     { type: 'item', id: 'uuid', icon: 'fingerprint', label: 'UUID' },
   ]},
-  { type: 'group', id: 'g-img',   icon: 'image', label: '图像处理', expanded: false, children: [] },
+  { type: 'group', id: 'g-img', icon: 'image', label: '图像处理', expanded: false, children: [
+    { type: 'item', id: 'image-format',   glyph: 'Fmt', label: '格式转换' },
+    { type: 'item', id: 'image-compress', glyph: 'Cmp', label: '图片压缩' },
+  ]},
   { type: 'group', id: 'g-text',  icon: 'type',  label: '文本处理', expanded: true, children: [
     { type: 'item', id: 'escape',   glyph: 'TX', label: '转义 / 反转义' },
     { type: 'item', id: 'list-cmp', glyph: '≡',  label: '列表比对' },
