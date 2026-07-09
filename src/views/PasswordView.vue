@@ -214,13 +214,14 @@ async function copyAll() {
 .section-actions { display: flex; gap: 4px; }
 
 .config {
-  background: var(--card);
+  background: transparent;
   border-radius: var(--r-md);
   padding: 6px;
   display: flex; flex-direction: column; gap: 4px;
 }
 .row {
-  background: var(--card-2);
+  background: transparent;
+  border: 1px solid var(--border-accent);
   border-radius: 8px;
   padding: 14px 16px;
   min-height: 64px;
@@ -256,7 +257,7 @@ async function copyAll() {
 
 .count-ctl {
   display: flex; align-items: center; gap: 4px;
-  background: var(--card); border-radius: 8px; padding: 2px;
+  background: transparent; border-radius: 8px; padding: 2px;
 }
 .step {
   width: 26px; height: 26px; border-radius: 6px;
@@ -283,8 +284,8 @@ async function copyAll() {
 }
 
 .result-card {
-  background: var(--card);
-  border: 1px solid var(--rule);
+  background: transparent;
+  border: 1px solid var(--border-accent);
   border-radius: var(--r-md);
   padding: 10px;
   flex: 1; min-height: 0;
@@ -305,7 +306,7 @@ async function copyAll() {
   display: flex; align-items: center; gap: 10px;
   padding: 8px 10px; border-radius: 8px;
 }
-.pwd-row:hover { background: var(--card-2); }
+.pwd-row:hover { background: color-mix(in srgb, var(--aside-2) 10%, transparent); }
 .pwd-row .idx {
   flex-shrink: 0; width: 28px;
   font-family: var(--mono); font-size: 12px; color: var(--ink-4);

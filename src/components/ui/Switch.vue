@@ -50,6 +50,6 @@ function toggle() {
   transition: transform .22s cubic-bezier(.2,.7,.2,1);
 }
 .switch input { position: absolute; opacity: 0; pointer-events: none; }
-.switch.on { background: var(--ink); }
+.switch.on { background: var(--accent); }
 .switch.on::after { transform: translateX(20px); }
 </style>

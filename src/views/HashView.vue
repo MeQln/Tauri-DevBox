@@ -243,14 +243,14 @@ function formatSize(n: number): string {
   padding: 12px 14px;
   font-family: var(--mono);
   font-size: 13.5px;
-  background: var(--card);
-  border: 1px solid var(--rule);
+  background: transparent;
+  border: 1px solid var(--border-accent);
   border-radius: var(--r-md);
   resize: none; outline: none;
   color: var(--ink);
   word-break: break-all;
 }
-.text-area:focus { border-color: var(--link); }
+.text-area:focus { border-color: var(--aside-3); }
 
 .dropzone {
   min-height: 165px;
@@ -274,8 +274,8 @@ function formatSize(n: number): string {
 
 .result {
   flex: 1; min-height: 0;
-  background: var(--card);
-  border: 1px solid var(--rule);
+  background: transparent;
+  border: 1px solid var(--border-accent);
   border-radius: var(--r-md);
   padding: 12px 14px;
   display: flex; flex-direction: column; gap: 10px;

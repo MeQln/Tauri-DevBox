@@ -227,13 +227,14 @@ async function copyOutput() {
 .section-actions { display: flex; gap: 4px; }
 
 .config {
-  background: var(--card);
+  background: transparent;
   border-radius: var(--r-md);
   padding: 6px;
   display: flex; flex-direction: column; gap: 4px;
 }
 .row {
-  background: var(--card-2);
+  background: transparent;
+  border: 1px solid var(--border-accent);
   border-radius: 8px;
   padding: 14px 16px;
   min-height: 64px;

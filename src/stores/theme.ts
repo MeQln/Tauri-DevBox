@@ -2,43 +2,63 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 
 export type ThemeMode = 'light' | 'dark'
+export type ThemeColor = 'blue' | 'purple' | 'green' | 'rose' | 'teal'
 
-const STORAGE_KEY = 'devbox-theme'
+const MODE_KEY = 'devbox-theme'
+const COLOR_KEY = 'devbox-color'
 
-function readStored(): ThemeMode {
-  const v = localStorage.getItem(STORAGE_KEY)
+function readStoredMode(): ThemeMode {
+  const v = localStorage.getItem(MODE_KEY)
   return v === 'dark' ? 'dark' : 'light'
 }
 
-function applyDom(mode: ThemeMode) {
+function readStoredColor(): ThemeColor {
+  const v = localStorage.getItem(COLOR_KEY)
+  const valid: ThemeColor[] = ['blue', 'purple', 'green', 'rose', 'teal']
+  return valid.includes(v as ThemeColor) ? (v as ThemeColor) : 'blue'
+}
+
+function applyDom(mode: ThemeMode, color: ThemeColor) {
   document.documentElement.dataset.theme = mode
+  document.documentElement.dataset.color = color
 }
 
 /**
- * 启动前同步应用主题，避免浅色 → 深色闪烁。
+ * 启动前同步应用主题与配色，避免闪烁。
  * 在 main.ts 的 app.mount() 之前调用 —— 不依赖 pinia 实例。
  */
 export function initTheme() {
-  applyDom(readStored())
+  applyDom(readStoredMode(), readStoredColor())
 }
 
 export const useThemeStore = defineStore('theme', () => {
-  const mode = ref<ThemeMode>(readStored())
+  const mode = ref<ThemeMode>(readStoredMode())
+  const color = ref<ThemeColor>(readStoredColor())
   const isDark = computed(() => mode.value === 'dark')
 
-  function set(next: ThemeMode) {
+  function setMode(next: ThemeMode) {
     mode.value = next
+  }
+
+  function setColor(next: ThemeColor) {
+    color.value = next
   }
 
   function toggle() {
     mode.value = mode.value === 'dark' ? 'light' : 'dark'
   }
 
-  // mode 变化时同步 DOM 与 localStorage；immediate 确保首屏与 store 初始化一致
+  // mode 变化时同步 DOM 与 localStorage
   watch(mode, (m) => {
-    applyDom(m)
-    localStorage.setItem(STORAGE_KEY, m)
+    applyDom(m, color.value)
+    localStorage.setItem(MODE_KEY, m)
   }, { immediate: true })
 
-  return { mode, isDark, set, toggle }
+  // color 变化时同步 DOM 与 localStorage
+  watch(color, (c) => {
+    applyDom(mode.value, c)
+    localStorage.setItem(COLOR_KEY, c)
+  }, { immediate: true })
+
+  return { mode, color, isDark, setMode, setColor, toggle }
 })

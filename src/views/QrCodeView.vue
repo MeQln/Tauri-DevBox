@@ -262,16 +262,16 @@ function clearInput() {
   padding: 12px 14px;
   font-family: var(--mono, 'SF Mono', Menlo, Consolas, monospace);
   font-size: 13.5px;
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: 1px solid var(--border-accent);
   border-radius: var(--r-md);
   resize: none; outline: none;
-  color: var(--ink-1);
+  color: var(--ink);
 }
-.text-area:focus { border-color: var(--accent, #5b8cff); }
+.text-area:focus { border-color: var(--aside-3); }
 
 .dropzone {
-  border: 2px dashed var(--rule);
+  border: 2px dashed var(--border-accent);
   border-radius: var(--r-md);
   padding: 24px 18px;
   text-align: center;
@@ -285,7 +285,8 @@ function clearInput() {
 
 .preview {
   flex: 1;
-  background: var(--card);
+  background: transparent;
+  border: 1px solid var(--border-accent);
   border-radius: var(--r-md);
   padding: 14px 16px;
   display: flex; flex-direction: column; min-height: 0;

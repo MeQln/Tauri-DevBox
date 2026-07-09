@@ -165,13 +165,14 @@ watch([isV7, uppercase, hyphen, count], generate, { immediate: true })
 .section-actions { display: flex; gap: 4px; }
 
 .config {
-  background: var(--card);
+  background: transparent;
   border-radius: var(--r-md);
   padding: 6px;
   display: flex; flex-direction: column; gap: 4px;
 }
 .row {
-  background: var(--card-2);
+  background: transparent;
+  border: 1px solid var(--border-accent);
   border-radius: 8px;
   padding: 14px 16px;
   min-height: 64px;
@@ -190,7 +191,7 @@ watch([isV7, uppercase, hyphen, count], generate, { immediate: true })
 
 .count-ctl {
   display: flex; align-items: center; gap: 4px;
-  background: var(--card); border-radius: 8px; padding: 2px;
+  background: transparent; border-radius: 8px; padding: 2px;
 }
 .step {
   width: 26px; height: 26px; border-radius: 6px;
@@ -207,8 +208,8 @@ watch([isV7, uppercase, hyphen, count], generate, { immediate: true })
 .num-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
 .result-card {
-  background: var(--card);
-  border: 1px solid var(--rule);
+  background: transparent;
+  border: 1px solid var(--border-accent);
   border-radius: var(--r-md);
   padding: 8px;
   flex: 1; min-height: 0;
@@ -219,7 +220,7 @@ watch([isV7, uppercase, hyphen, count], generate, { immediate: true })
   display: flex; align-items: center; gap: 10px;
   padding: 8px 10px; border-radius: 8px;
 }
-.uuid-row:hover { background: var(--card-2); }
+.uuid-row:hover { background: color-mix(in srgb, var(--aside-2) 10%, transparent); }
 .uuid-row .idx {
   flex-shrink: 0; width: 28px;
   font-family: var(--mono); font-size: 12px; color: var(--ink-4);

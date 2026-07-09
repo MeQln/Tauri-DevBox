@@ -13,3 +13,9 @@
 import { NDialogProvider } from 'naive-ui'
 import AsideNav from '@/components/nav/AsideNav.vue'
 </script>
+
+<style scoped>
+main {
+  background: linear-gradient(90deg, #ffffff, var(--aside-top));
+}
+</style>

@@ -162,7 +162,8 @@ async function copyOutput() {
 .section-actions { display: flex; gap: 4px; }
 
 .config {
-  background: var(--card);
+  background: color-mix(in srgb, var(--aside-2) 6%, var(--card-2));
+  border: 1px solid var(--border-accent);
   border-radius: var(--r-md);
   padding: 6px;
   display: flex; flex-direction: column; gap: 4px;

@@ -66,22 +66,26 @@ onUnmounted(() => window.removeEventListener('keydown', onGlobalKeydown))
 </script>
 
 <style scoped>
+.aside {
+  background: linear-gradient(180deg, var(--aside-top), var(--aside));
+  --rule: var(--border-accent);
+}
 .search-box {
   display: flex;
   align-items: center;
   gap: 6px;
   height: 32px;
   padding: 0 8px;
-  background: var(--surface);
-  border: 1px solid var(--rule);
+  background: transparent;
+  border: 1px solid var(--aside-2);
   border-radius: var(--r-md);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .search-box:focus-within {
-  border-color: var(--ink-5);
+  border-color: var(--aside-3);
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
 }
-.search-ico { color: var(--ink-4); flex-shrink: 0; }
+.search-ico { color: var(--ink-3); flex-shrink: 0; }
 .search-box input {
   flex: 1;
   min-width: 0;

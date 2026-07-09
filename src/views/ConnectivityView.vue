@@ -117,24 +117,24 @@ onBeforeUnmount(() => {
 }
 .card {
   flex: 1; min-height: 0;
-  background: var(--card); border-radius: var(--r-md); padding: 12px;
+  background: transparent; border-radius: var(--r-md); padding: 12px;
   display: flex; flex-direction: column; gap: 10px;
 }
 .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .card-title { font-size: 14px; font-weight: 500; color: var(--ink); }
 .card-actions { display: flex; gap: 8px; align-items: center; }
 .input {
-  padding: 7px 12px; border: 1px solid var(--rule); border-radius: var(--r-md);
-  background: var(--card-2); color: var(--ink); font-size: 13px; min-width: 220px;
+  padding: 7px 12px; border: 1px solid var(--border-accent); border-radius: var(--r-md);
+  background: transparent; color: var(--ink); font-size: 13px; min-width: 220px;
 }
-.input:focus { outline: none; border-color: var(--link); }
+.input:focus { outline: none; border-color: var(--aside-3); }
 .port-input { min-width: 90px; }
 .btn {
-  padding: 7px 16px; border: 1px solid var(--rule); border-radius: var(--r-md);
-  background: var(--card-2); color: var(--ink); cursor: pointer; font-size: 13px;
+  padding: 7px 16px; border: 1px solid var(--border-accent); border-radius: var(--r-md);
+  background: transparent; color: var(--ink); cursor: pointer; font-size: 13px;
 }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn:not(:disabled):hover { background: var(--card); }
+.btn:not(:disabled):hover { background: color-mix(in srgb, var(--aside-2) 10%, transparent); }
 .result { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
 .badge-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .badge {
@@ -145,7 +145,7 @@ onBeforeUnmount(() => {
 .meta { font-size: 12.5px; color: var(--ink-3); font-family: var(--mono); }
 .msg { font-size: 12.5px; color: var(--ink-2); }
 .output {
-  background: var(--card-2); border: 1px solid var(--rule-soft); border-radius: var(--r-sm);
+  background: transparent; border: 1px solid var(--rule-soft); border-radius: var(--r-sm);
   padding: 10px 12px; font-family: var(--mono); font-size: 12px; line-height: 1.6;
   white-space: pre-wrap; word-break: break-all; color: var(--ink-2);
   flex: 1; min-height: 120px; overflow: auto;

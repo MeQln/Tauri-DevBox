@@ -131,6 +131,7 @@ onMounted(load)
 
 <style scoped>
 .port-view {
+  --port-rule: var(--border-accent);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -154,36 +155,40 @@ onMounted(load)
 }
 .port-search {
   padding: 6px 10px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--port-rule);
   border-radius: var(--r-md);
   font-size: 13px;
   width: 220px;
-  background: var(--card-2);
+  background: transparent;
   color: var(--ink);
 }
 .port-search:focus {
   outline: none;
-  border-color: var(--link);
+  border-color: var(--aside-3);
 }
 .port-refresh {
   padding: 6px 14px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--port-rule);
   border-radius: var(--r-md);
-  background: var(--card-2);
+  background: transparent;
   color: var(--ink);
   cursor: pointer;
   font-size: 13px;
+  transition: background 0.15s;
 }
 .port-refresh:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+.port-refresh:not(:disabled):hover {
+  background: color-mix(in srgb, var(--aside-2) 12%, transparent);
+}
 .port-table-wrap {
   flex: 1;
   overflow: auto;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--port-rule);
   border-radius: var(--r-md);
-  background: var(--card-2);
+  background: transparent;
 }
 .port-table {
   width: 100%;
@@ -194,13 +199,15 @@ onMounted(load)
 .port-table td {
   padding: 8px 12px;
   text-align: left;
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid var(--port-rule);
   color: var(--ink);
 }
 .port-table th {
   position: sticky;
   top: 0;
-  background: var(--card);
+  background: color-mix(in srgb, var(--aside-2) 6%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   font-weight: 600;
   user-select: none;
 }
@@ -208,26 +215,27 @@ onMounted(load)
   cursor: pointer;
 }
 .port-table th.sortable:hover {
-  color: var(--link);
+  color: var(--aside-3);
 }
 .port-table .arrow {
   opacity: 0.6;
   font-size: 12px;
 }
 .port-table tbody tr:hover {
-  background: var(--card);
+  background: color-mix(in srgb, var(--aside-2) 10%, transparent);
 }
 .port-kill {
   padding: 4px 12px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--port-rule);
   border-radius: var(--r-sm);
   background: transparent;
   color: var(--danger);
   cursor: pointer;
   font-size: 12px;
+  transition: background 0.15s;
 }
 .port-kill:hover {
-  background: var(--card);
+  background: color-mix(in srgb, var(--danger) 8%, transparent);
 }
 .port-empty {
   display: flex;
