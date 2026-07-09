@@ -102,6 +102,10 @@ watch([input, isFormat, indent4], ([t, fmt, i4]) => {
   if (!text) { output.value = ''; error.value = ''; isValid.value = true; return }
   try {
     const parsed = JSON.parse(text)
+    // 仅接受对象 {} 或数组 []，拒绝数字/字符串/布尔/null 等原始值
+    if (typeof parsed !== 'object' || parsed === null) {
+      throw new Error('仅支持 JSON 对象或数组')
+    }
     output.value = fmt
       ? JSON.stringify(parsed, null, i4 ? 4 : 2)
       : JSON.stringify(parsed)
