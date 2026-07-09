@@ -2,7 +2,7 @@
   <div class="window grid grid-cols-[280px_1fr] w-screen h-screen min-h-0">
     <AsideNav />
     <main class="bg-surface min-w-0 min-h-0 flex flex-col px-8 pt-[22px] pb-8 overflow-hidden">
-      <n-dialog-provider>
+      <n-dialog-provider class="flex flex-col flex-1 min-h-0">
         <router-view />
       </n-dialog-provider>
     </main>
