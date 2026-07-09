@@ -123,9 +123,14 @@ function escapeUnicode(s: string): string {
   for (const ch of s) {
     const cp = ch.codePointAt(0)!
     if (cp > 127 || cp < 32) {
-      out += '\\u' + cp.toString(16).toUpperCase().padStart(4, '0')
-    } else if (ch === '\\') {
-      out += '\\\\'
+      if (cp > 0xFFFF) {
+        // 增补平面字符使用代理对 \uDxxx\uDxxx
+        const hi = Math.floor((cp - 0x10000) / 0x400) + 0xD800
+        const lo = (cp - 0x10000) % 0x400 + 0xDC00
+        out += '\\u' + hi.toString(16).toUpperCase() + '\\u' + lo.toString(16).toUpperCase()
+      } else {
+        out += '\\u' + cp.toString(16).toUpperCase().padStart(4, '0')
+      }
     } else {
       out += ch
     }
@@ -134,9 +139,10 @@ function escapeUnicode(s: string): string {
 }
 
 function unescapeUnicode(s: string): string {
-  return s.replace(/\\u([0-9A-Fa-f]{4})/g, (_, hex) =>
-    String.fromCodePoint(parseInt(hex, 16))
-  )
+  return s
+    .replace(/\\u([0-9A-Fa-f]{4})/g, (_, hex) =>
+      String.fromCodePoint(parseInt(hex, 16))
+    )
 }
 
 function escapeJson(s: string): string {
@@ -152,13 +158,13 @@ function escapeJson(s: string): string {
 
 function unescapeJson(s: string): string {
   return s
-    .replace(/\\b/g, '\b')
-    .replace(/\\f/g, '\f')
+    .replace(/\\\\/g, '\\')
+    .replace(/\\"/g, '"')
     .replace(/\\n/g, '\n')
     .replace(/\\r/g, '\r')
     .replace(/\\t/g, '\t')
-    .replace(/\\"/g, '"')
-    .replace(/\\\\/g, '\\')
+    .replace(/\\f/g, '\f')
+    .replace(/\\b/g, '\b')
 }
 
 function transform(text: string, doEscape: boolean, t: EscapeType): string {

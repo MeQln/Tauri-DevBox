@@ -97,10 +97,10 @@
     <div v-if="!diff.length && !inputA && !inputB" class="diff-hint">
       在两侧输入文本后自动比对
     </div>
-    <div v-else-if="!diff.length && sameHint" class="diff-hint diff-same">
+    <div v-else-if="sameHint" class="diff-hint diff-same">
       两段文本完全一致
     </div>
-    <div v-else class="diff-wrap" ref="diffRef">
+    <div v-else class="diff-wrap">
       <div v-for="(d, i) in diff" :key="i" :class="['diff-line', `diff-${d.type}`]">
         <span class="diff-ln">{{ d.ln }}</span>
         <span class="diff-marker">{{ d.type === 'same' ? ' ' : d.type === 'add' ? '+' : '-' }}</span>
@@ -150,9 +150,7 @@ function norm(s: string): string {
   return r
 }
 
-/* ============================================================
- * LCS 核心
- * ============================================================ */
+/** LCS 核心 */
 
 function lcs<T>(a: T[], b: T[], equal: (x: T, y: T) => boolean): { type: 'same' | 'add' | 'remove'; val: T }[] {
   const m = a.length, n = b.length
@@ -178,9 +176,7 @@ function lcs<T>(a: T[], b: T[], equal: (x: T, y: T) => boolean): { type: 'same' 
   return result.reverse()
 }
 
-/* ============================================================
- * 字符级 diff 分段（行内高亮用）
- * ============================================================ */
+/** 字符级 diff 分段（行内高亮用） */
 
 function charSegments(textA: string, textB: string): DiffSegment[] {
   const charsA = [...textA]
@@ -217,31 +213,27 @@ function injectIntraLineSegments(lines: DiffLine[]): void {
   }
 }
 
-/* ============================================================
- * 行级 diff
- * ============================================================ */
+/** 行级 diff */
 
 function lineDiff(a: string[], b: string[]): DiffLine[] {
   const equal = (x: string, y: string) => norm(x) === norm(y)
   const raw = lcs(a, b, equal)
   const result: DiffLine[] = []
-  let la = a.length, lb = b.length
+  let la = 1, lb = 1
   for (const d of raw) {
     if (d.type === 'same') {
-      result.push({ type: 'same', text: d.val as string, ln: `${la--}:${lb--}` })
+      result.push({ type: 'same', text: d.val as string, ln: `${la++}:${lb++}` })
     } else if (d.type === 'add') {
-      result.push({ type: 'add', text: d.val as string, ln: `:${lb--}` })
+      result.push({ type: 'add', text: d.val as string, ln: `:${lb++}` })
     } else {
-      result.push({ type: 'remove', text: d.val as string, ln: `${la--}:` })
+      result.push({ type: 'remove', text: d.val as string, ln: `${la++}:` })
     }
   }
   injectIntraLineSegments(result)
   return result
 }
 
-/* ============================================================
- * 全文逐字符 diff
- * ============================================================ */
+/** 全文逐字符 diff */
 
 function charDiff(stra: string, strb: string): DiffLine[] {
   const charsA = [...stra]
@@ -260,9 +252,7 @@ function charDiff(stra: string, strb: string): DiffLine[] {
   return merged.map(d => ({ type: d.type, text: d.text, ln: '' }))
 }
 
-/* ============================================================
- * 计算属性
- * ============================================================ */
+/** 计算属性 */
 
 const diff = computed<DiffLine[]>(() => {
   const a = inputA.value
@@ -278,9 +268,7 @@ const sameHint = computed(() => {
   return diff.value.every(d => d.type === 'same')
 })
 
-/* ============================================================
- * 交互函数
- * ============================================================ */
+/** 交互函数 */
 
 async function pasteInto(side: 'a' | 'b') {
   try {

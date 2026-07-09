@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useMessage } from 'naive-ui'
 import { marked } from 'marked'
 import PillBtn from '@/components/ui/PillBtn.vue'
