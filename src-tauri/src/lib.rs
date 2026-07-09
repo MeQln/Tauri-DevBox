@@ -22,6 +22,9 @@ pub fn run() {
       tools::hash::hash_file,
       tools::password::generate_passwords,
       tools::uuid::generate_uuids,
+      tools::image::image_read,
+      tools::image::image_convert,
+      tools::image::image_compress,
     ])
     .setup(|app| {
       if cfg!(debug_assertions) {

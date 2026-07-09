@@ -1,5 +1,6 @@
 pub mod base64;
 pub mod hash;
+pub mod image;
 pub mod net;
 pub mod password;
 pub mod port;
