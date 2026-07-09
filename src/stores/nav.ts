@@ -52,7 +52,7 @@ export const NAV_DATA: NavNode[] = [
   ]},
   { type: 'group', id: 'g-text',  icon: 'type',  label: '文本处理', expanded: true, children: [
     { type: 'item', id: 'escape',   glyph: 'TX', label: '转义 / 反转义' },
-    { type: 'item', id: 'list-cmp', glyph: '≡',  label: '列表比对' },
+    { type: 'item', id: 'list-cmp', glyph: '≡',  label: '文本比对' },
     { type: 'item', id: 'md',       glyph: 'MD', label: 'Markdown 预览' },
   ]},
 ]
