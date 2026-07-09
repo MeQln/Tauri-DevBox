@@ -34,7 +34,11 @@
   </div>
 
   <div class="section-title">
-    <span>输入</span>
+    <span class="section-head">
+      输入
+      <span v-if="input.trim() && isValid" class="badge badge-ok">有效</span>
+      <span v-if="input.trim() && !isValid" class="badge badge-err">无效</span>
+    </span>
     <div class="section-actions">
       <PillBtn icon-only title="粘贴" @click="pasteInput">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -56,6 +60,7 @@
     </div>
   </div>
   <CodeArea v-model="input" class="flex-1" />
+  <div v-if="error" class="error-bar">{{ error }}</div>
 
   <div class="section-title">
     <span>输出</span>
@@ -68,7 +73,6 @@
       </PillBtn>
     </div>
   </div>
-  <div v-if="error" class="error-bar">{{ error }}</div>
   <CodeArea v-model="output" readonly class="flex-1" />
 </template>
 
@@ -87,21 +91,27 @@ const indent4  = ref(false)
 const input  = ref('')
 const output = ref('')
 const error  = ref('')
+const isValid = ref(true) // 无输入时视为有效
 
 const message = useMessage()
 
+let lastValid = ''
+
 watch([input, isFormat, indent4], ([t, fmt, i4]) => {
   const text = t.trim()
-  if (!text) { output.value = ''; error.value = ''; return }
+  if (!text) { output.value = ''; error.value = ''; isValid.value = true; return }
   try {
     const parsed = JSON.parse(text)
     output.value = fmt
       ? JSON.stringify(parsed, null, i4 ? 4 : 2)
       : JSON.stringify(parsed)
+    lastValid = output.value
     error.value = ''
+    isValid.value = true
   } catch (e) {
-    output.value = ''
+    output.value = lastValid // 保留上次有效输出
     error.value = (e as Error).message
+    isValid.value = false
   }
 }, { immediate: true })
 
@@ -165,6 +175,14 @@ async function copyOutput() {
   color: var(--ink-2);
   margin: 12px 0 8px;
 }
+.section-head { display: flex; align-items: center; gap: 8px; }
+
+.badge {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+.badge-ok  { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
+.badge-err { background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); }
 .section-actions { display: flex; gap: 4px; }
 
 .config {
