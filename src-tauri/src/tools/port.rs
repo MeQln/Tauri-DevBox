@@ -68,21 +68,52 @@ pub fn list_ports() -> Result<Vec<PortEntry>, String> {
 pub fn kill_port(pid: u32) -> Result<(), String> {
     let sys = sysinfo::System::new_all();
     let sys_pid = sysinfo::Pid::from_u32(pid);
-    match sys.process(sys_pid) {
-        Some(proc) => {
-            // Unix: kill_with(Signal::Term) 发 SIGTERM（优雅结束）
-            // Windows: kill_with(Term) 返回 None（Windows 无 SIGTERM 语义），
-            //          fallback 到 kill()（TerminateProcess，强制）—— 平台固有限制，不报错
-            let ok = proc
-                .kill_with(sysinfo::Signal::Term)
-                .unwrap_or_else(|| proc.kill());
-            if ok {
-                Ok(())
-            } else {
-                Err("结束失败".to_string())
-            }
+    let found = sys.process(sys_pid).is_some();
+
+    if let Some(proc) = sys.process(sys_pid) {
+        // proc.kill():
+        //   - Unix:  SIGKILL（强制结束）
+        //   - Windows: taskkill.exe /F（sysinfo 内部已带 CREATE_NO_WINDOW 防弹窗）
+        if proc.kill() {
+            return Ok(());
         }
-        None => Err(format!("进程 {} 不存在", pid)),
+    }
+
+    // sysinfo 找不到进程或 kill 失败 → 兜底路径
+    kill_fallback(pid, found)
+}
+
+/// sysinfo 兜底路径。Windows 上直接调 taskkill.exe；Unix 上按存在与否给错误提示。
+#[cfg(target_os = "windows")]
+fn kill_fallback(pid: u32, _found: bool) -> Result<(), String> {
+    use std::os::windows::process::CommandExt;
+    use std::process::Command;
+
+    const CREATE_NO_WINDOW: u32 = 0x08000000;
+    let output = Command::new("taskkill")
+        .args(&["/PID", &pid.to_string(), "/F"])
+        .creation_flags(CREATE_NO_WINDOW)
+        .output()
+        .map_err(|e| format!("执行 taskkill 失败: {}", e))?;
+
+    if output.status.success() {
+        return Ok(());
+    }
+
+    // taskkill 的 stderr 包含失败原因（如权限不足、进程不存在）
+    let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+    if !stderr.is_empty() {
+        return Err(stderr);
+    }
+    Err("结束失败，请尝试以管理员身份运行 DevBox".to_string())
+}
+
+#[cfg(not(target_os = "windows"))]
+fn kill_fallback(_pid: u32, found: bool) -> Result<(), String> {
+    if found {
+        Err("结束失败".to_string())
+    } else {
+        Err(format!("进程 {} 不存在", _pid))
     }
 }
 
