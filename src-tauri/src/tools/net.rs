@@ -39,23 +39,53 @@ fn ping_args(host: &str) -> Vec<&str> {
 #[tauri::command]
 pub fn ping_host(app: AppHandle, host: String) -> Result<bool, String> {
     let args = ping_args(&host);
-    let mut child = Command::new("ping")
-        .args(&args)
+    let mut cmd = Command::new("ping");
+    cmd.args(&args)
         .stdout(Stdio::piped())
-        .stderr(Stdio::null())
+        .stderr(Stdio::null());
+
+    // Windows: 不弹出控制台窗口
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        cmd.creation_flags(CREATE_NO_WINDOW);
+    }
+
+    let mut child = cmd
         .spawn()
         .map_err(|e| format!("执行 ping 失败: {}", e))?;
 
     if let Some(stdout) = child.stdout.take() {
-        let reader = BufReader::new(stdout);
-        for line in reader.lines().filter_map(Result::ok) {
-            let _ = app.emit(
-                "ping:line",
-                PingLine {
-                    host: host.clone(),
-                    line,
-                },
-            );
+        let mut reader = BufReader::new(stdout);
+        let mut buf = Vec::new();
+        loop {
+            match reader.read_until(b'\n', &mut buf) {
+                Ok(0) => break,
+                Ok(_) => {
+                    // 去除尾部 \r\n / \n
+                    while matches!(buf.last(), Some(b'\n' | b'\r')) {
+                        buf.pop();
+                    }
+                    if buf.is_empty() {
+                        continue;
+                    }
+                    // 使用 lossy 转换支持非 UTF-8 编码（如中文 Windows 的 GBK）
+                    let line = String::from_utf8_lossy(&buf).to_string();
+                    buf.clear();
+                    let _ = app.emit(
+                        "ping:line",
+                        PingLine {
+                            host: host.clone(),
+                            line,
+                        },
+                    );
+                }
+                Err(e) => {
+                    eprintln!("读取 ping 输出错误: {}", e);
+                    break;
+                }
+            }
         }
     }
     let status = child.wait().map_err(|e| e.to_string())?;
