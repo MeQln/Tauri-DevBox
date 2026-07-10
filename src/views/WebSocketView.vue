@@ -39,7 +39,7 @@ type LogEntry = { ts: string; dir: Dir; text: string }
 
 const message = useMessage()
 
-const url = ref('wss://echo.websocket.events')
+const url = ref('wss://echo.websocket.org')
 const draft = ref('')
 const connected = ref(false)
 const connecting = ref(false)
