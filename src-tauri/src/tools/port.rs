@@ -68,13 +68,16 @@ pub fn list_ports() -> Result<Vec<PortEntry>, String> {
 pub fn kill_port(pid: u32) -> Result<(), String> {
     let sys = sysinfo::System::new_all();
     let sys_pid = sysinfo::Pid::from_u32(pid);
-    let found = sys.process(sys_pid).is_some();
+    let proc = sys.process(sys_pid);
+    let found = proc.is_some();
 
-    if let Some(proc) = sys.process(sys_pid) {
-        // proc.kill():
-        //   - Unix:  SIGKILL（强制结束）
-        //   - Windows: taskkill.exe /F（sysinfo 内部已带 CREATE_NO_WINDOW 防弹窗）
-        if proc.kill() {
+    if let Some(proc) = proc {
+        // Unix: SIGTERM（优雅结束），fallback 到 SIGKILL
+        // Windows: Term 不支持，kill_with(Term) 返回 None → 走 fallback 到 kill()（taskkill /F）
+        let ok = proc
+            .kill_with(sysinfo::Signal::Term)
+            .unwrap_or_else(|| proc.kill());
+        if ok {
             return Ok(());
         }
     }
@@ -110,11 +113,11 @@ fn kill_fallback(pid: u32, _found: bool) -> Result<(), String> {
 }
 
 #[cfg(not(target_os = "windows"))]
-fn kill_fallback(_pid: u32, found: bool) -> Result<(), String> {
+fn kill_fallback(pid: u32, found: bool) -> Result<(), String> {
     if found {
         Err("结束失败".to_string())
     } else {
-        Err(format!("进程 {} 不存在", _pid))
+        Err(format!("进程 {} 不存在", pid))
     }
 }
 

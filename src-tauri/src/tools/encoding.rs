@@ -20,5 +20,5 @@ pub fn decode_output(bytes: &[u8]) -> String {
 
     // 非 Windows 平台兜底（macOS/Linux 上非 UTF-8 几乎不会出现，但保底）
     #[cfg(not(target_os = "windows"))]
-    String::from_utf8_lossy(bytes).to_string()
+    String::from_utf8_lossy(bytes).into_owned()
 }

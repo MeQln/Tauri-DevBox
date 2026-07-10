@@ -1,5 +1,5 @@
 use serde::Serialize;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use std::net::TcpStream;
 use std::process::{Command, Stdio};
 use std::time::{Duration, Instant};
@@ -42,7 +42,7 @@ pub fn ping_host(app: AppHandle, host: String) -> Result<bool, String> {
     let mut cmd = Command::new("ping");
     cmd.args(&args)
         .stdout(Stdio::piped())
-        .stderr(Stdio::null());
+        .stderr(Stdio::piped());
 
     // Windows: 不弹出控制台窗口
     #[cfg(target_os = "windows")]
@@ -88,7 +88,22 @@ pub fn ping_host(app: AppHandle, host: String) -> Result<bool, String> {
             }
         }
     }
+
     let status = child.wait().map_err(|e| e.to_string())?;
+
+    // ping 失败时读取 stderr，输出到界面帮助用户定位原因（如域名不存在、权限不足）
+    if !status.success() {
+        if let Some(mut stderr) = child.stderr.take() {
+            let mut buf = Vec::new();
+            if let Ok(n) = stderr.read_to_end(&mut buf) {
+                if n > 0 {
+                    let line = super::encoding::decode_output(&buf);
+                    let _ = app.emit("ping:line", PingLine { host: host.clone(), line });
+                }
+            }
+        }
+    }
+
     Ok(status.success())
 }
 
