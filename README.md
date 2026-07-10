@@ -139,20 +139,11 @@ DevBox/
 │   ├── src/
 │   │   ├── lib.rs            #   crate root + Builder 链
 │   │   ├── main.rs           #   入口
-│   │   └── tools/            #   #[tauri::command] 实现（base64 / encoding / hash / image / net / password / port / qrcode / url / uuid）
-│   ├── capabilities/         #   权限配置
-│   └── tauri.conf.json
-└── docs/superpowers/         #   设计 spec 与实现计划
+│   │   └── tools/            #   #[tauri::command] 实现（base64 / encoding / hash / image / net / password / port └──qrcode / url / uuid）
+    ├── capabilities/         #   权限配置
+    └── tauri.conf.json
 ```
 
-## 文档
-
-| 文档 | 说明 |
-|------|------|
-| [`CLAUDE.md`](CLAUDE.md) | 项目专属指令（常用命令、架构概览、约束） |
-| [`DESIGN.md`](DESIGN.md) | UI 视觉与交互约束（单一真源） |
-| [`docs/superpowers/specs/2026-06-19-tauri-vue3-skeleton-design.md`](docs/superpowers/specs/2026-06-19-tauri-vue3-skeleton-design.md) | 架构设计 spec |
-| [`docs/superpowers/plans/2026-06-19-tauri-vue3-skeleton.md`](docs/superpowers/plans/2026-06-19-tauri-vue3-skeleton.md) | 实现计划 |
 
 ## License
 
