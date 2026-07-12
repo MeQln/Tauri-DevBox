@@ -81,6 +81,7 @@ const colorOptions: { value: ThemeColor; label: string; swatch: string }[] = [
   { value: 'green', label: '绿色', swatch: '#6cb86c' },
   { value: 'rose', label: '玫瑰色', swatch: '#e88a8a' },
   { value: 'teal', label: '青色', swatch: '#5cb8b8' },
+  { value: 'warm', label: '暖色', swatch: '#d4a040' },
 ]
 </script>
 

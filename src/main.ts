@@ -5,6 +5,7 @@ import { router } from './router'
 import { initTheme } from './stores/theme'
 import './styles/tokens.css'
 import './styles/tailwind.css'
+import './styles/common.css'
 
 // mount 前同步应用主题，避免浅色 → 深色闪烁（FOUC）
 initTheme()

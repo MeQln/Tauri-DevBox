@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 
 export type ThemeMode = 'light' | 'dark'
-export type ThemeColor = 'blue' | 'purple' | 'green' | 'rose' | 'teal'
+export type ThemeColor = 'blue' | 'purple' | 'green' | 'rose' | 'teal' | 'warm'
 
 const MODE_KEY = 'devbox-theme'
 const COLOR_KEY = 'devbox-color'
@@ -14,7 +14,7 @@ function readStoredMode(): ThemeMode {
 
 function readStoredColor(): ThemeColor {
   const v = localStorage.getItem(COLOR_KEY)
-  const valid: ThemeColor[] = ['blue', 'purple', 'green', 'rose', 'teal']
+  const valid: ThemeColor[] = ['blue', 'purple', 'green', 'rose', 'teal', 'warm']
   return valid.includes(v as ThemeColor) ? (v as ThemeColor) : 'blue'
 }
 

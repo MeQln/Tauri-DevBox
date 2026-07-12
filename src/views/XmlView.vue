@@ -55,7 +55,7 @@
       </PillBtn>
     </div>
   </div>
-  <CodeArea v-model="input" class="flex-1" />
+  <textarea v-model="input" class="text-area" placeholder="在此输入 XML"></textarea>
 
   <div class="section-title">
     <span>输出</span>
@@ -69,7 +69,7 @@
     </div>
   </div>
   <div v-if="error" class="error-bar">{{ error }}</div>
-  <CodeArea v-model="output" readonly class="flex-1" />
+  <textarea v-model="output" class="text-area" readonly placeholder="格式化结果将在此显示"></textarea>
 </template>
 
 <script setup lang="ts">
@@ -77,7 +77,6 @@ import { ref, watch } from 'vue'
 import { useMessage } from 'naive-ui'
 import PillBtn from '@/components/ui/PillBtn.vue'
 import Switch from '@/components/ui/Switch.vue'
-import CodeArea from '@/components/ui/CodeArea.vue'
 import { clipboardApi } from '@/api/clipboard'
 import { open as openDialog } from '@tauri-apps/plugin-dialog'
 import { readTextFile } from '@tauri-apps/plugin-fs'
@@ -208,60 +207,5 @@ async function copyOutput() {
 </script>
 
 <style scoped>
-.page-head {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 18px;
-}
-.page-head h1 {
-  font-family: var(--serif);
-  font-size: 28px; font-weight: 500;
-  letter-spacing: -0.015em;
-}
-
-.section-title {
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 13.5px; font-weight: 500;
-  color: var(--ink-2);
-  margin: 12px 0 8px;
-}
-.section-actions { display: flex; gap: 4px; }
-
-.config {
-  background: transparent;
-  border-radius: var(--r-md);
-  padding: 6px;
-  display: flex; flex-direction: column; gap: 4px;
-}
-.row {
-  background: transparent;
-  border: 1px solid var(--border-accent);
-  border-radius: 8px;
-  padding: 14px 16px;
-  min-height: 64px;
-  display: grid; grid-template-columns: 44px 1fr auto;
-  align-items: center; gap: 12px;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
-}
-.row-icon {
-  width: 22px; height: 22px;
-  display: inline-flex; align-items: center; justify-content: center;
-  color: var(--ink-2);
-}
-.row-icon :deep(svg) { width: 18px; height: 18px; }
-.row-title { font-size: 14px; font-weight: 500; }
-.row-desc { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
-
-.error-bar {
-  background: color-mix(in srgb, var(--warn) 8%, transparent);
-  color: var(--warn);
-  border-left: 3px solid var(--warn);
-  border-radius: var(--r-sm);
-  padding: 8px 12px;
-  font-family: var(--mono);
-  font-size: 12.5px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-all;
-  margin-bottom: 12px;
-}
+/* 所有样式已移至 src/styles/common.css */
 </style>

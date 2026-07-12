@@ -149,46 +149,6 @@ watch([isV7, uppercase, hyphen, count], generate, { immediate: true })
 </script>
 
 <style scoped>
-.page-head h1 {
-  font-family: var(--serif);
-  font-size: 28px; font-weight: 500;
-  letter-spacing: -0.015em;
-  margin-bottom: 18px;
-}
-
-.section-title {
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 13.5px; font-weight: 500;
-  color: var(--ink-2);
-  margin: 12px 0 8px;
-}
-.section-actions { display: flex; gap: 4px; }
-
-.config {
-  background: transparent;
-  border-radius: var(--r-md);
-  padding: 6px;
-  display: flex; flex-direction: column; gap: 4px;
-}
-.row {
-  background: transparent;
-  border: 1px solid var(--border-accent);
-  border-radius: 8px;
-  padding: 14px 16px;
-  min-height: 64px;
-  display: grid; grid-template-columns: 44px 1fr auto;
-  align-items: center; gap: 12px;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
-}
-.row-icon {
-  width: 22px; height: 22px;
-  display: inline-flex; align-items: center; justify-content: center;
-  color: var(--ink-2);
-}
-.row-icon :deep(svg) { width: 18px; height: 18px; }
-.row-title { font-size: 14px; font-weight: 500; }
-.row-desc { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
-
 .count-ctl {
   display: flex; align-items: center; gap: 4px;
   background: transparent; border-radius: 8px; padding: 2px;

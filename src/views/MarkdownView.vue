@@ -41,7 +41,7 @@
           </PillBtn>
         </div>
       </div>
-      <CodeArea v-model="input" class="md-editor" />
+      <textarea v-model="input" class="text-area" placeholder="在此输入 Markdown"></textarea>
     </div>
 
     <div v-show="viewMode !== 'edit'" class="md-pane md-preview-pane">
@@ -66,7 +66,6 @@ import { ref, computed } from 'vue'
 import { useMessage } from 'naive-ui'
 import { marked } from 'marked'
 import PillBtn from '@/components/ui/PillBtn.vue'
-import CodeArea from '@/components/ui/CodeArea.vue'
 import { clipboardApi } from '@/api/clipboard'
 
 type ViewMode = 'split' | 'edit' | 'preview'
@@ -148,49 +147,6 @@ async function copyHtml() {
 </script>
 
 <style scoped>
-.page-head {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 18px;
-}
-.page-head h1 {
-  font-family: var(--serif);
-  font-size: 28px; font-weight: 500;
-  letter-spacing: -0.015em;
-}
-
-.section-title {
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 13.5px; font-weight: 500;
-  color: var(--ink-2);
-  margin: 12px 0 8px;
-}
-.section-actions { display: flex; gap: 4px; align-items: center; }
-
-.config {
-  background: color-mix(in srgb, var(--aside-2) 6%, var(--card-2));
-  border: 1px solid var(--border-accent);
-  border-radius: var(--r-md);
-  padding: 6px;
-  display: flex; flex-direction: column; gap: 4px;
-}
-.row {
-  background: var(--card-2);
-  border-radius: 8px;
-  padding: 14px 16px;
-  min-height: 64px;
-  display: grid; grid-template-columns: 44px 1fr auto;
-  align-items: center; gap: 12px;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
-}
-.row-icon {
-  width: 22px; height: 22px;
-  display: inline-flex; align-items: center; justify-content: center;
-  color: var(--ink-2);
-}
-.row-icon :deep(svg) { width: 18px; height: 18px; }
-.row-title { font-size: 14px; font-weight: 500; }
-.row-desc { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
-
 .view-group {
   display: flex; gap: 2px;
   background: color-mix(in srgb, var(--aside-2) 12%, transparent);
@@ -237,8 +193,6 @@ async function copyHtml() {
 .pane-title {
   font-size: 13.5px; font-weight: 500; color: var(--ink-2);
 }
-
-.md-editor { flex: 1; min-height: 0; }
 
 /* 预览区域 — 可滚动 */
 .md-preview {

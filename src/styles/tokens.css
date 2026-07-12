@@ -74,6 +74,16 @@
   --accent: #5cb8b8;
 }
 
+/* 暖色配色 */
+[data-color='warm'] {
+  --aside-top: #f5efe6;
+  --aside-2: #e8decc;
+  --aside-3: #d9ccb5;
+  --border-accent: #d0c4b0;
+  --link: #b8822a;
+  --accent: #d4a040;
+}
+
 /* 深色主题：通过 [data-theme="dark"] 覆盖颜色变量。tailwind 与 scoped CSS
    均经 var(--xxx) 引用 token，此处覆盖即全局生效。圆角 / 字体栈沿用浅色值。 */
 [data-theme='dark'] {
@@ -142,6 +152,16 @@
   --border-accent: #a8c4c0;
   --link: #4d9a9a;
   --accent: #5cb8b8;
+}
+
+/* 深色 + 暖色 */
+[data-theme='dark'][data-color='warm'] {
+  --aside-top: #c8baa0;
+  --aside-2: #b4a68c;
+  --aside-3: #a09078;
+  --border-accent: #9a8c74;
+  --link: #d4a040;
+  --accent: #d4a040;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

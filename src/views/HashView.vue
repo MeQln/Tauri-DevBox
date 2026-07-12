@@ -213,13 +213,6 @@ function formatSize(n: number): string {
 </script>
 
 <style scoped>
-.page-head h1 {
-  font-family: var(--serif);
-  font-size: 28px; font-weight: 500;
-  letter-spacing: -0.015em;
-  margin-bottom: 18px;
-}
-
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -231,26 +224,8 @@ function formatSize(n: number): string {
   min-height: 0; gap: 12px;
 }
 
-.section-title {
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 13.5px; font-weight: 500; color: var(--ink-2);
-}
-.section-actions { display: flex; gap: 4px; align-items: center; }
-
-.text-area {
-  flex: 1;
-  min-height: 200px;
-  padding: 12px 14px;
-  font-family: var(--mono);
-  font-size: 13.5px;
-  background: transparent;
-  border: 1px solid var(--border-accent);
-  border-radius: var(--r-md);
-  resize: none; outline: none;
-  color: var(--ink);
-  word-break: break-all;
-}
-.text-area:focus { border-color: var(--aside-3); }
+/* 文本框 — 仅覆盖 common.css 的 word-break */
+.text-area { word-break: break-all; }
 
 .dropzone {
   min-height: 165px;
