@@ -41,7 +41,7 @@
           </PillBtn>
         </div>
       </div>
-      <textarea v-model="input" class="text-area" placeholder="在此输入 Markdown"></textarea>
+      <textarea v-model="input" class="text-area" placeholder="在此输入 Markdown" autocorrect="off" spellcheck="false" autocapitalize="off"></textarea>
     </div>
 
     <div v-show="viewMode !== 'edit'" class="md-pane md-preview-pane">

@@ -55,7 +55,7 @@
       </PillBtn>
     </div>
   </div>
-  <textarea v-model="input" class="text-area" placeholder="在此输入 XML"></textarea>
+  <textarea v-model="input" class="text-area" placeholder="在此输入 XML" autocorrect="off" spellcheck="false" autocapitalize="off"></textarea>
 
   <div class="section-title">
     <span>输出</span>

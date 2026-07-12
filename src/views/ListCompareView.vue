@@ -20,7 +20,7 @@
         </PillBtn>
       </div>
     </div>
-    <textarea v-model="inputA" class="text-area" placeholder="在此输入文本 A"></textarea>
+    <textarea v-model="inputA" class="text-area" placeholder="在此输入文本 A" autocorrect="off" spellcheck="false" autocapitalize="off"></textarea>
 
     <div class="section-title">
       <span>原文 B</span>
@@ -38,7 +38,7 @@
         </PillBtn>
       </div>
     </div>
-    <textarea v-model="inputB" class="text-area" placeholder="在此输入文本 B"></textarea>
+    <textarea v-model="inputB" class="text-area" placeholder="在此输入文本 B" autocorrect="off" spellcheck="false" autocapitalize="off"></textarea>
 
     <div class="section-title">
       <span>比对结果</span>

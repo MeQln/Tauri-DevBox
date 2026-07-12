@@ -37,7 +37,7 @@
     <span class="section-head">
       输入
       <span v-if="input.trim() && isValid" class="badge badge-ok">有效</span>
-      <span v-if="input.trim() && !isValid" class="badge badge-err">无效</span>
+      <span v-if="input.trim() && !isValid" class="badge badge-err">无效 — {{ error }}</span>
     </span>
     <div class="section-actions">
       <PillBtn icon-only title="粘贴" @click="pasteInput">
@@ -59,8 +59,7 @@
       </PillBtn>
     </div>
   </div>
-  <textarea v-model="input" class="text-area" placeholder="在此输入 JSON"></textarea>
-  <div v-if="error" class="error-bar">{{ error }}</div>
+  <textarea v-model="input" class="text-area" placeholder="在此输入 JSON" autocorrect="off" spellcheck="false" autocapitalize="off"></textarea>
 
   <div class="section-title">
     <span>输出</span>

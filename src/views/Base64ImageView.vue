@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <textarea v-model="input" class="text-area" placeholder="在此输入 Base64 字符串（可含 data: 前缀）"></textarea>
+      <textarea v-model="input" class="text-area" placeholder="在此输入 Base64 字符串（可含 data: 前缀）" autocorrect="off" spellcheck="false" autocapitalize="off"></textarea>
     </div>
 
     <!-- 右列 -->

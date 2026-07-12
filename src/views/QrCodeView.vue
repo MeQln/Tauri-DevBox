@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <textarea v-model="input" class="text-area" placeholder="在此输入要生成二维码的文本"></textarea>
+      <textarea v-model="input" class="text-area" placeholder="在此输入要生成二维码的文本" autocorrect="off" spellcheck="false" autocapitalize="off"></textarea>
     </div>
 
     <!-- 右列 -->

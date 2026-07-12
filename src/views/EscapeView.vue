@@ -58,7 +58,7 @@
       </PillBtn>
     </div>
   </div>
-  <textarea v-model="input" class="text-area" placeholder="在此输入要转义的文本"></textarea>
+  <textarea v-model="input" class="text-area" placeholder="在此输入要转义的文本" autocorrect="off" spellcheck="false" autocapitalize="off"></textarea>
 
   <div class="section-title">
     <span>输出</span>

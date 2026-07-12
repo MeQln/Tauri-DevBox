@@ -26,7 +26,7 @@
           </PillBtn>
         </div>
       </div>
-      <textarea v-model="input" class="text-area" placeholder="输入要计算哈希的文本"></textarea>
+      <textarea v-model="input" class="text-area" placeholder="输入要计算哈希的文本" autocorrect="off" spellcheck="false" autocapitalize="off"></textarea>
     </div>
 
     <!-- 右列：文件输入 + 哈希结果 -->
