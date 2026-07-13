@@ -9,35 +9,32 @@
       <div class="section-title">
         <span>文本</span>
         <div class="section-actions">
-          <PillBtn icon-only title="复制" @click="copyText">
+          <PillBtn title="复制" @click="copyText">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="9" width="13" height="13" rx="2" />
               <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
             </svg>
+            复制
           </PillBtn>
-          <PillBtn icon-only title="粘贴" @click="pasteText">
+          <PillBtn title="粘贴" @click="pasteText">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="3" width="6" height="4" rx="1" />
               <path d="M9 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-3" />
             </svg>
+            粘贴
           </PillBtn>
-          <PillBtn icon-only title="读取文件" @click="readTextFromFile">
+          <PillBtn title="文件" @click="readTextFromFile">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M14 3v5h5" />
               <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8z" />
             </svg>
+            文件
           </PillBtn>
-          <PillBtn icon-only title="保存为图片" @click="saveImage" :disabled="!svgMarkup">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-              <path d="M7 10l5 5 5-5" />
-              <path d="M12 15V3" />
-            </svg>
-          </PillBtn>
-          <PillBtn icon-only title="清空" @click="clearInput">
+                    <PillBtn title="清空" @click="clearInput">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>
+            清空
           </PillBtn>
         </div>
       </div>
@@ -58,7 +55,16 @@
 
       <!-- 右下：二维码预览 -->
       <div class="preview">
-        <div class="preview-title">二维码</div>
+        <div class="preview-title">
+          <span>二维码</span>
+          <PillBtn icon-only title="保存为图片" @click="saveImage" :disabled="!svgMarkup">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+              <path d="M7 10l5 5 5-5" />
+              <path d="M12 15V3" />
+            </svg>
+          </PillBtn>
+        </div>
         <div class="preview-body">
           <div v-if="svgMarkup" class="svg-wrap" v-html="svgMarkup" />
           <span v-else class="empty-hint">输入文本后自动生成二维码</span>
@@ -291,7 +297,10 @@ function clearInput() {
   padding: 14px 16px;
   display: flex; flex-direction: column; min-height: 0;
 }
-.preview-title { font-size: 13.5px; color: var(--ink-2); margin-bottom: 10px; }
+.preview-title {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13.5px; color: var(--ink-2); margin-bottom: 10px;
+}
 .preview-body {
   flex: 1;
   display: flex; align-items: center; justify-content: center;

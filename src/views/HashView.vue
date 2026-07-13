@@ -7,22 +7,32 @@
       <div class="section-title">
         <span>文本</span>
         <div class="section-actions">
-          <PillBtn icon-only title="粘贴" @click="pasteText">
+          <PillBtn title="粘贴" @click="pasteText">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="3" width="6" height="4" rx="1" />
               <path d="M9 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-3" />
             </svg>
+            粘贴
           </PillBtn>
-          <PillBtn icon-only title="读取文本文件" @click="readTextFromFile">
+          <PillBtn title="复制" @click="copyText" :disabled="!input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+            </svg>
+            复制
+          </PillBtn>
+          <PillBtn title="文件" @click="readTextFromFile">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M14 3v5h5" />
               <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8z" />
             </svg>
+            文件
           </PillBtn>
-          <PillBtn icon-only title="清空" @click="clearAll">
+          <PillBtn title="清空" @click="clearAll">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>
+            清空
           </PillBtn>
         </div>
       </div>
@@ -186,6 +196,15 @@ async function pasteText() {
     input.value = await clipboardApi.read()
   } catch {
     message.error('粘贴失败')
+  }
+}
+
+async function copyText() {
+  try {
+    await clipboardApi.write(input.value)
+    message.success('已复制')
+  } catch {
+    message.error('复制失败')
   }
 }
 

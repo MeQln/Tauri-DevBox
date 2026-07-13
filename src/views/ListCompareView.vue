@@ -7,16 +7,25 @@
     <div class="section-title">
       <span>原文 A</span>
       <div class="section-actions">
-        <PillBtn icon-only title="粘贴" @click="() => pasteInto('a')">
+        <PillBtn title="粘贴" @click="() => pasteInto('a')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="9" y="3" width="6" height="4" rx="1" />
             <path d="M9 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-3" />
           </svg>
+          粘贴
         </PillBtn>
-        <PillBtn icon-only title="清空" @click="clearInput('a')">
+        <PillBtn title="复制" @click="copyInput('a')" :disabled="!inputA">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+          </svg>
+          复制
+        </PillBtn>
+        <PillBtn title="清空" @click="clearInput('a')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M6 6l12 12M18 6L6 18" />
           </svg>
+          清空
         </PillBtn>
       </div>
     </div>
@@ -25,16 +34,25 @@
     <div class="section-title">
       <span>原文 B</span>
       <div class="section-actions">
-        <PillBtn icon-only title="粘贴" @click="() => pasteInto('b')">
+        <PillBtn title="粘贴" @click="() => pasteInto('b')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="9" y="3" width="6" height="4" rx="1" />
             <path d="M9 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-3" />
           </svg>
+          粘贴
         </PillBtn>
-        <PillBtn icon-only title="清空" @click="clearInput('b')">
+        <PillBtn title="复制" @click="copyInput('b')" :disabled="!inputB">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+          </svg>
+          复制
+        </PillBtn>
+        <PillBtn title="清空" @click="clearInput('b')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M6 6l12 12M18 6L6 18" />
           </svg>
+          清空
         </PillBtn>
       </div>
     </div>
@@ -48,11 +66,12 @@
             <path d="M7 16l-4-4 4-4" /><path d="M3 12h18" /><path d="M17 8l4 4-4 4" />
           </svg>
         </button>
-        <PillBtn icon-only title="复制结果" @click="copyDiff">
+        <PillBtn title="复制结果" @click="copyDiff">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="9" y="9" width="13" height="13" rx="2" />
             <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
           </svg>
+          复制结果
         </PillBtn>
       </div>
     </div>
@@ -207,6 +226,15 @@ async function pasteInto(side: 'a' | 'b') {
     message.success('已粘贴')
   } catch {
     message.error('粘贴失败')
+  }
+}
+
+async function copyInput(side: 'a' | 'b') {
+  try {
+    await clipboardApi.write(side === 'a' ? inputA.value : inputB.value)
+    message.success('已复制')
+  } catch {
+    message.error('复制失败')
   }
 }
 
